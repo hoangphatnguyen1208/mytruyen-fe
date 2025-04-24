@@ -9,109 +9,141 @@ import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SignupPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState("")
-  const { signup, isLoading } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { signup } = useAuth()
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
-
-    if (!name || !email || !password || !confirmPassword) {
-      setError("Vui lòng nhập đầy đủ thông tin")
-      return
-    }
 
     if (password !== confirmPassword) {
-      setError("Mật khẩu không khớp")
+      toast({
+        title: "Mật khẩu không khớp",
+        description: "Vui lòng kiểm tra lại mật khẩu xác nhận",
+        variant: "destructive",
+      })
       return
     }
 
-    const success = await signup(name, email, password)
-    if (success) {
-      router.push("/")
-    } else {
-      setError("Đã có lỗi xảy ra khi đăng ký")
+    setIsSubmitting(true)
+
+    try {
+      const success = await signup(name, email, password)
+
+      if (success) {
+        toast({
+          title: "Đăng ký thành công",
+          description: "Chào mừng bạn đến với My Truyện!",
+        })
+        router.push("/")
+      } else {
+        toast({
+          title: "Đăng ký thất bại",
+          description: "Đã xảy ra lỗi, vui lòng thử lại sau",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Đăng ký thất bại",
+        description: "Đã xảy ra lỗi, vui lòng thử lại sau",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="flex justify-between items-center mb-6">
-          <Link href="/" className="text-2xl font-bold">
-            TruyệnHay
-          </Link>
-          <ThemeToggle />
+    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+        <div className="flex flex-col space-y-2 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">Tạo tài khoản</h1>
+          <p className="text-sm text-muted-foreground">Nhập thông tin của bạn để tạo tài khoản</p>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Đăng ký</CardTitle>
-            <CardDescription>Tạo tài khoản mới để truy cập vào TruyệnHay</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="space-y-2">
+        <div className="grid gap-6">
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
                 <Label htmlFor="name">Họ tên</Label>
-                <Input id="name" placeholder="Nguyễn Văn A" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input
+                  id="name"
+                  placeholder="Nguyễn Văn A"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  autoCapitalize="words"
+                  autoComplete="name"
+                  autoCorrect="off"
+                  disabled={isSubmitting}
+                  required
+                />
               </div>
-
-              <div className="space-y-2">
+              <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  placeholder="name@example.com"
                   type="email"
-                  placeholder="your@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
+                  disabled={isSubmitting}
+                  required
                 />
               </div>
-
-              <div className="space-y-2">
+              <div className="grid gap-2">
                 <Label htmlFor="password">Mật khẩu</Label>
-                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input
+                  id="password"
+                  placeholder="••••••••"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoCapitalize="none"
+                  autoComplete="new-password"
+                  autoCorrect="off"
+                  disabled={isSubmitting}
+                  required
+                />
               </div>
-
-              <div className="space-y-2">
+              <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
                 <Input
                   id="confirmPassword"
+                  placeholder="••••••••"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoCapitalize="none"
+                  autoComplete="new-password"
+                  autoCorrect="off"
+                  disabled={isSubmitting}
+                  required
                 />
               </div>
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Đang đăng ký..." : "Đăng ký"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Đang đăng ký..." : "Đăng ký"}
               </Button>
-            </form>
-          </CardContent>
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-muted-foreground">
-              Đã có tài khoản?{" "}
-              <Link href="/login" className="text-primary hover:underline">
-                Đăng nhập
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
+            </div>
+          </form>
+          <div className="text-center text-sm">
+            Đã có tài khoản?{" "}
+            <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
+              Đăng nhập
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -34,7 +34,10 @@ export function UserNav() {
 
   const handleLogout = () => {
     logout()
-    router.push("/")
+    // Đảm bảo chuyển hướng sau khi đã xóa thông tin người dùng
+    setTimeout(() => {
+      router.push("/")
+    }, 100)
   }
 
   const initials = user.name
@@ -79,7 +82,7 @@ export function UserNav() {
             <span>Cài đặt</span>
           </Link>
         </DropdownMenuItem>
-        {user.role === "admin" && (
+        {user && user.role === "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/admin" className="flex w-full cursor-pointer items-center">
               <LayoutDashboard className="mr-2 h-4 w-4" />

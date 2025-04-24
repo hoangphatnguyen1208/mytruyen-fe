@@ -34,9 +34,8 @@ export default function HotStoriesPage() {
     })
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Truyện Hot</h1>
+    <div className="container mx-auto px-4 py-3">
+      <div className="mb-4">
         <p className="text-muted-foreground">Những truyện được đọc nhiều nhất trên My Truyện</p>
       </div>
 
@@ -146,7 +145,7 @@ const hotStories = [
     slug: "dau-pha-thuong-khung",
     author: "Thiên Tàm Thổ Đậu",
     description:
-      "Đấu khí đại lục, một đại lục rộng lớn với đấu khí là sức mạnh chí cao vô thượng. Tiêu Viêm, một thiên tài tu luyện đấu khí, vì một lý do không rõ mà bị mất đi thiên phú tu luyện.",
+      "Đấu khí đại lục, một đại lục rộng lớn với đấu khí là sức mạnh chí cao vô thượng. Tiêu Viêm, một thiên tài tu luyện đấu khí, vì một lý do không rõ mà bị mất đi thiên ph tu luyện.",
     cover: "/placeholder.svg?height=128&width=96",
     chapters: 1665,
     status: "Hoàn thành",

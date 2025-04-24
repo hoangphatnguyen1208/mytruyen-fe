@@ -6,8 +6,6 @@ import { BookOpen, Calendar, Clock, Heart, List, Share2, User } from "lucide-rea
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { UserNav } from "@/components/user-nav"
 
 export default function StoryPage() {
   const params = useParams()
@@ -31,16 +29,6 @@ export default function StoryPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <header className="flex justify-between items-center mb-6">
-        <Link href="/" className="text-2xl font-bold">
-          My Truyện
-        </Link>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <UserNav />
-        </div>
-      </header>
-
       <div className="flex flex-col md:flex-row gap-6 mb-8">
         <div className="w-full md:w-48 flex-shrink-0">
           <img

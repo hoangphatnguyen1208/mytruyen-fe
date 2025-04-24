@@ -34,9 +34,8 @@ export default function CompleteStoriesPage() {
     })
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-3">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Truyện Hoàn Thành</h1>
         <p className="text-muted-foreground">Những truyện đã hoàn thành trên My Truyện</p>
       </div>
 

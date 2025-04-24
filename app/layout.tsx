@@ -1,48 +1,46 @@
+import type React from "react"
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { AuthProvider } from "@/contexts/auth-context"
 import { ThemeScript } from "./theme-script"
+import { AuthProvider } from "@/contexts/auth-context"
+import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { BackToTop } from "@/components/back-to-top"
 import { Toaster } from "@/components/ui/toaster"
+import { LanguageProvider } from "@/contexts/language-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "My Truyện - Kho truyện chữ online lớn nhất",
-  description: "Đọc truyện chữ online miễn phí, cập nhật nhanh nhất",
+  description:
+    "Đọc truyện online, truyện hay, truyện chữ, truyện full, truyện convert, truyện dịch, truyện hoàn thành.",
     generator: 'v0.dev'
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <head>
-        {/* Add a script to prevent theme flickering */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem('theme') || 'system';
-                  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                  document.documentElement.classList.add(theme === 'system' ? systemTheme : theme);
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ThemeScript />
-          <AuthProvider>
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <BackToTop />
-            <Toaster />
-          </AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <div className="container mx-auto px-4">
+                <Header />
+              </div>
+              <main className="flex-1 pt-2">{children}</main>
+              <Footer />
+              <BackToTop />
+              <Toaster />
+            </AuthProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

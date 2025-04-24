@@ -3,12 +3,9 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { ArrowLeft, ArrowRight, Home, List, Settings } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { UserNav } from "@/components/user-nav"
 
 export default function ChapterPage() {
   const params = useParams()
@@ -59,50 +56,6 @@ export default function ChapterPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <header className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-xl font-bold">{story.title}</h1>
-          <p className="text-sm text-muted-foreground">
-            Chương {chapterId}: {chapter.title}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href={`/story/${slug}`}>
-              <Home className="h-4 w-4" />
-            </Link>
-          </Button>
-          <Button variant="ghost" size="icon" asChild>
-            <Link href={`/story/${slug}`}>
-              <List className="h-4 w-4" />
-            </Link>
-          </Button>
-          <ThemeToggle />
-          <UserNav />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setFontSize("small")}>
-                Cỡ chữ nhỏ {fontSize === "small" && "✓"}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFontSize("medium")}>
-                Cỡ chữ vừa {fontSize === "medium" && "✓"}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFontSize("large")}>
-                Cỡ chữ lớn {fontSize === "large" && "✓"}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFontSize("xlarge")}>
-                Cỡ chữ rất lớn {fontSize === "xlarge" && "✓"}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
-
       {/* Reading progress bar */}
       <div className="w-full h-1 bg-muted mb-6">
         <div className="h-full bg-primary" style={{ width: `${progress}%` }}></div>

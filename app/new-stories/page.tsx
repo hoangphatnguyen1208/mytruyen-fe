@@ -34,9 +34,8 @@ export default function NewStoriesPage() {
     })
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-4">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Truyện Mới</h1>
         <p className="text-muted-foreground">Những truyện mới nhất trên My Truyện</p>
       </div>
 

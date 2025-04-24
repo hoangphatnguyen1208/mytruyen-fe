@@ -1,12 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { BookOpen, Clock, Search, Star, ChevronRight } from "lucide-react"
+import { BookOpen, Clock, Star, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { UserNav } from "@/components/user-nav"
 import { useAuth } from "@/contexts/auth-context"
 
 export default function Home() {
@@ -14,28 +11,6 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        {/* Logo section */}
-        <div className="md:w-1/4">
-          <h1 className="text-3xl font-bold">My Truyện</h1>
-          <p className="text-muted-foreground">Kho truyện chữ online lớn nhất</p>
-        </div>
-
-        {/* Search section - centered */}
-        <div className="w-full md:w-2/4 flex justify-center">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input type="search" placeholder="Tìm kiếm truyện..." className="w-full pl-8" />
-          </div>
-        </div>
-
-        {/* User controls section */}
-        <div className="flex justify-end md:w-1/4 gap-2 items-center">
-          <ThemeToggle />
-          <UserNav />
-        </div>
-      </header>
-
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">
           <Tabs defaultValue="hot" className="mb-8">

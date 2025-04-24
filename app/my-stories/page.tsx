@@ -45,9 +45,8 @@ export default function MyStoriesPage() {
     })
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-3">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Truyện của tôi</h1>
         <p className="text-muted-foreground">Các truyện bạn đã lưu và đang theo dõi</p>
       </div>
 

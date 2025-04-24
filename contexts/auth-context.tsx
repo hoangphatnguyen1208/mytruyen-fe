@@ -1,3 +1,5 @@
+// Cập nhật AuthContext để sử dụng API routes
+
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
@@ -6,16 +8,16 @@ type User = {
   id: string
   name: string
   email: string
-  role: "user" | "admin" // Thêm trường role
+  role: "user" | "admin"
 }
 
 type AuthContextType = {
   user: User | null
   login: (email: string, password: string) => Promise<boolean>
   signup: (name: string, email: string, password: string) => Promise<boolean>
-  logout: () => void
+  logout: () => Promise<void>
   isLoading: boolean
-  isAdmin: () => boolean // Thêm hàm kiểm tra vai trò admin
+  isAdmin: () => boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -24,47 +26,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Check if user is logged in on initial load
+  // Kiểm tra người dùng đã đăng nhập khi tải trang
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    const checkAuth = async () => {
+      try {
+        // Kiểm tra từ localStorage trước
+        const storedUser = localStorage.getItem("user")
+        if (storedUser) {
+          setUser(JSON.parse(storedUser))
+          setIsLoading(false)
+          return
+        }
+
+        // Nếu không có trong localStorage, kiểm tra session từ API
+        const response = await fetch("/api/auth/session")
+        if (response.ok) {
+          const data = await response.json()
+          if (data.user) {
+            setUser(data.user)
+            localStorage.setItem("user", JSON.stringify(data.user))
+          }
+        }
+      } catch (error) {
+        console.error("Auth check error:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
-    setIsLoading(false)
+
+    checkAuth()
   }, [])
 
-  // Login function
+  // Hàm đăng nhập
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      // In a real app, you would make an API call to verify credentials
-      // This is a mock implementation
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-      // Mock user data - in a real app, this would come from your backend
-      if (email === "user@example.com" && password === "password") {
-        const userData = {
-          id: "1",
-          name: "Độc Giả",
-          email: email,
-          role: "user", // Người dùng thường
-        }
-        setUser(userData)
-        localStorage.setItem("user", JSON.stringify(userData))
-        setIsLoading(false)
-        return true
-      } else if (email === "admin@example.com" && password === "admin") {
-        const userData = {
-          id: "2",
-          name: "Quản Trị Viên",
-          email: email,
-          role: "admin", // Quản trị viên
-        }
-        setUser(userData)
-        localStorage.setItem("user", JSON.stringify(userData))
+      const data = await response.json()
+
+      if (data.success && data.user) {
+        setUser(data.user)
+        localStorage.setItem("user", JSON.stringify(data.user))
         setIsLoading(false)
         return true
       }
+
       setIsLoading(false)
       return false
     } catch (error) {
@@ -74,20 +87,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Signup function
+  // Hàm đăng ký
   const signup = async (name: string, email: string, password: string) => {
     setIsLoading(true)
     try {
-      // In a real app, you would make an API call to create a user
-      // This is a mock implementation
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
+      // Trong thực tế, gọi API đăng ký
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      })
 
-      // Mock user creation - in a real app, this would be handled by your backend
+      const data = await response.json()
+
+      if (data.success && data.user) {
+        setUser(data.user)
+        localStorage.setItem("user", JSON.stringify(data.user))
+        setIsLoading(false)
+        return true
+      }
+
+      // Mô phỏng đăng ký thành công
       const userData = {
         id: Math.random().toString(36).substr(2, 9),
         name,
         email,
-        role: "user", // Người dùng mới luôn có vai trò "user"
+        role: "user",
       }
       setUser(userData)
       localStorage.setItem("user", JSON.stringify(userData))
@@ -100,15 +127,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Logout function
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem("user")
+  // Hàm đăng xuất
+  const logout = async () => {
+    try {
+      // Gọi API đăng xuất để xóa cookie
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      })
+
+      // Xóa dữ liệu người dùng khỏi state và localStorage
+      setUser(null)
+      localStorage.removeItem("user")
+    } catch (error) {
+      console.error("Logout error:", error)
+    }
   }
 
-  // Function to check if user is admin
+  // Hàm kiểm tra quyền admin
   const isAdmin = () => {
-    return user?.role === "admin"
+    return user !== null && user.role === "admin"
   }
 
   return (

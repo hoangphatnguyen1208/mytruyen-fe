@@ -6,20 +6,23 @@ export function middleware(request: NextRequest) {
 
   // Kiểm tra nếu đường dẫn bắt đầu bằng /admin
   if (path.startsWith("/admin")) {
-    // Lấy thông tin người dùng từ localStorage (trong thực tế, bạn nên sử dụng cookies hoặc JWT)
-    const user = request.cookies.get("user")?.value
+    // Lấy thông tin người dùng từ cookie
+    const userCookie = request.cookies.get("user")?.value
 
-    // Nếu không có người dùng hoặc không phải admin, chuyển hướng đến trang đăng nhập
-    if (!user) {
+    // Nếu không có cookie người dùng, chuyển hướng đến trang đăng nhập
+    if (!userCookie) {
       return NextResponse.redirect(new URL("/login", request.url))
     }
 
     try {
-      const userData = JSON.parse(user)
-      if (userData.role !== "admin") {
-        return NextResponse.redirect(new URL("/", request.url))
+      const userData = JSON.parse(userCookie)
+      // Kiểm tra quyền admin
+      if (!userData || userData.role !== "admin") {
+        // Nếu không phải admin, chuyển hướng đến trang chủ
+        return NextResponse.redirect(new URL("/unauthorized", request.url))
       }
     } catch (error) {
+      // Nếu có lỗi khi parse JSON, chuyển hướng đến trang đăng nhập
       return NextResponse.redirect(new URL("/login", request.url))
     }
   }
