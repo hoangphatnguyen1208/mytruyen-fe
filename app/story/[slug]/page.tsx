@@ -6,6 +6,7 @@ import { BookOpen, Calendar, Clock, Heart, List, Share2, User } from "lucide-rea
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CommentSection } from "@/components/comment-section"
 
 export default function StoryPage() {
   const params = useParams()
@@ -96,7 +97,7 @@ export default function StoryPage() {
       <Tabs defaultValue="chapters">
         <TabsList className="mb-4">
           <TabsTrigger value="chapters">Danh sách chương</TabsTrigger>
-          <TabsTrigger value="comments">Bình luận (24)</TabsTrigger>
+          <TabsTrigger value="comments">Bình luận (2)</TabsTrigger>
         </TabsList>
         <TabsContent value="chapters">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -117,29 +118,49 @@ export default function StoryPage() {
           )}
         </TabsContent>
         <TabsContent value="comments">
-          <div className="space-y-4">
-            <div className="border rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs">TH</div>
-                <div>
-                  <div className="font-medium text-sm">TruyenHayFan</div>
-                  <div className="text-xs text-muted-foreground">2 ngày trước</div>
-                </div>
-              </div>
-              <p className="text-sm">Truyện hay quá! Mong tác giả ra chương mới sớm.</p>
-            </div>
-
-            <div className="border rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs">ĐG</div>
-                <div>
-                  <div className="font-medium text-sm">ĐộcGiả123</div>
-                  <div className="text-xs text-muted-foreground">5 ngày trước</div>
-                </div>
-              </div>
-              <p className="text-sm">Nhân vật chính quá mạnh, mong có thêm nhiều thử thách hơn.</p>
-            </div>
-          </div>
+          <CommentSection
+            storyId={story.id.toString()}
+            initialComments={[
+              {
+                id: "comment-1",
+                user: {
+                  id: "user-1",
+                  name: "TruyenHayFan",
+                  avatar: "",
+                },
+                content: "Truyện hay quá! Mong tác giả ra chương mới sớm.",
+                createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                likes: 5,
+                isLiked: false,
+                replies: [
+                  {
+                    id: "reply-1",
+                    user: {
+                      id: "user-2",
+                      name: "NguyenVanA",
+                      avatar: "",
+                    },
+                    content: "Đồng ý! Tôi đang rất háo hức chờ đợi chương tiếp theo.",
+                    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                    likes: 2,
+                    isLiked: false,
+                  },
+                ],
+              },
+              {
+                id: "comment-2",
+                user: {
+                  id: "user-3",
+                  name: "ĐộcGiả123",
+                  avatar: "",
+                },
+                content: "Nhân vật chính quá mạnh, mong có thêm nhiều thử thách hơn.",
+                createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                likes: 3,
+                isLiked: true,
+              },
+            ]}
+          />
         </TabsContent>
       </Tabs>
     </div>

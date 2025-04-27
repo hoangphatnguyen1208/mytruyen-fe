@@ -5,13 +5,18 @@ import { BookOpen, Clock, Star, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/contexts/auth-context"
+import { SlidingBanner } from "@/components/sliding-banner"
+import { RecentStories } from "@/components/recent-stories"
 
 export default function Home() {
   const { user } = useAuth()
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* Add the sliding banner at the top of the page */}
+      <SlidingBanner />
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
         <div className="md:col-span-3">
           <Tabs defaultValue="hot" className="mb-8">
             <TabsList className="mb-4">
@@ -132,6 +137,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Move RecentStories to the bottom of the page */}
+      <RecentStories />
     </div>
   )
 }
