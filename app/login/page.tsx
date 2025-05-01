@@ -1,57 +1,57 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/auth-context";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Mail, Lock, BookOpen } from "lucide-react";
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Loader2, Mail, Lock, BookOpen } from "lucide-react"
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const { login } = useAuth();
-    const router = useRouter();
-    const { toast } = useToast();
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [rememberMe, setRememberMe] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const { login } = useAuth()
+    const router = useRouter()
+    const { toast } = useToast()
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+        e.preventDefault()
+        setIsSubmitting(true)
 
         try {
-            const success = await login(email, password);
+            const success = await login(email, password)
 
             if (success) {
                 toast({
                     title: "Đăng nhập thành công",
                     description: "Chào mừng bạn quay trở lại!",
-                });
-                router.push("/");
+                })
+                router.push("/")
             } else {
                 toast({
                     title: "Đăng nhập thất bại",
                     description: "Email hoặc mật khẩu không đúng",
                     variant: "destructive",
-                });
+                })
             }
         } catch (error) {
             toast({
                 title: "Đăng nhập thất bại",
                 description: "Đã xảy ra lỗi, vui lòng thử lại sau",
                 variant: "destructive",
-            });
+            })
         } finally {
-            setIsSubmitting(false);
+            setIsSubmitting(false)
         }
-    };
+    }
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -167,5 +167,5 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
-    );
+    )
 }
