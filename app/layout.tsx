@@ -14,35 +14,43 @@ import { LanguageProvider } from "@/contexts/language-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "My Truyện - Kho truyện chữ online lớn nhất",
-  description:
-    "Đọc truyện online, truyện hay, truyện chữ, truyện full, truyện convert, truyện dịch, truyện hoàn thành.",
-    generator: 'v0.dev'
+    title: "My Truyện - Kho truyện chữ online lớn nhất",
+    description:
+        "Đọc truyện online, truyện hay, truyện chữ, truyện full, truyện convert, truyện dịch, truyện hoàn thành.",
+    generator: "v0.dev",
+    verification: {
+        google: "QMfZdkAI3Z76eZ9z2LiHgGi--wt5x1V1UPFISsdC8Bg",
+    },
 }
 
 export default function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode
+    children: React.ReactNode
 }) {
-  return (
-    <html lang="vi" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <ThemeScript />
-          <LanguageProvider>
-            <AuthProvider>
-              <div className="container mx-auto px-4">
-                <Header />
-              </div>
-              <main className="flex-1 pt-2">{children}</main>
-              <Footer />
-              <BackToTop />
-              <Toaster />
-            </AuthProvider>
-          </LanguageProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-  )
+    return (
+        <html lang="vi" suppressHydrationWarning>
+            <body className={`${inter.className} min-h-screen flex flex-col`}>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <ThemeScript />
+                    <LanguageProvider>
+                        <AuthProvider>
+                            <div className="container mx-auto px-4">
+                                <Header />
+                            </div>
+                            <main className="flex-1 pt-2">{children}</main>
+                            <Footer />
+                            <BackToTop />
+                            <Toaster />
+                        </AuthProvider>
+                    </LanguageProvider>
+                </ThemeProvider>
+            </body>
+        </html>
+    )
 }
