@@ -14,12 +14,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-export default function CompleteStoriesPage() {
-  const [sortBy, setSortBy] = useState("rating")
+export default function HotStoriesPage() {
+  const [sortBy, setSortBy] = useState("views")
   const [searchTerm, setSearchTerm] = useState("")
 
   // Filter stories based on search term and sort
-  const filteredStories = completeStories
+  const filteredStories = hotStories
     .filter((story) => {
       return (
         story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -27,16 +27,16 @@ export default function CompleteStoriesPage() {
       )
     })
     .sort((a, b) => {
-      if (sortBy === "rating") return b.rating - a.rating
       if (sortBy === "views") return b.views - a.views
+      if (sortBy === "rating") return b.rating - a.rating
       if (sortBy === "chapters") return b.chapters - a.chapters
       return 0
     })
 
   return (
     <div className="container mx-auto px-4 py-3">
-      <div className="mb-6">
-        <p className="text-muted-foreground">Những truyện đã hoàn thành trên My Truyện</p>
+      <div className="mb-4">
+        <p className="text-muted-foreground">Những truyện được đọc nhiều nhất trên My Truyện</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -56,8 +56,8 @@ export default function CompleteStoriesPage() {
               <SelectValue placeholder="Sắp xếp theo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="rating">Đánh giá</SelectItem>
               <SelectItem value="views">Lượt đọc</SelectItem>
+              <SelectItem value="rating">Đánh giá</SelectItem>
               <SelectItem value="chapters">Số chương</SelectItem>
             </SelectContent>
           </Select>
@@ -112,7 +112,7 @@ function StoryCard({ story }) {
       <div className="flex-1 p-4">
         <div className="flex justify-between items-start">
           <div>
-            <Link href={`/story/${story.slug}`} className="text-lg font-semibold hover:text-primary hover:underline">
+            <Link href={`/truyen/${story.slug}`} className="text-lg font-semibold hover:text-primary hover:underline">
               {story.title}
             </Link>
             <p className="text-sm text-muted-foreground">{story.author}</p>
@@ -138,14 +138,14 @@ function StoryCard({ story }) {
   )
 }
 
-const completeStories = [
+const hotStories = [
   {
     id: 1,
     title: "Đấu Phá Thương Khung",
     slug: "dau-pha-thuong-khung",
     author: "Thiên Tàm Thổ Đậu",
     description:
-      "Đấu khí đại lục, một đại lục rộng lớn với đấu khí là sức mạnh chí cao vô thượng. Tiêu Viêm, một thiên tài tu luyện đấu khí, vì một lý do không rõ mà bị mất đi thiên phú tu luyện.",
+      "Đấu khí đại lục, một đại lục rộng lớn với đấu khí là sức mạnh chí cao vô thượng. Tiêu Viêm, một thiên tài tu luyện đấu khí, vì một lý do không rõ mà bị mất đi thiên ph tu luyện.",
     cover: "/placeholder.svg?height=128&width=96",
     chapters: 1665,
     status: "Hoàn thành",
@@ -192,6 +192,19 @@ const completeStories = [
     views: 6200000,
   },
   {
+    id: 3,
+    title: "Nguyên Tôn",
+    slug: "nguyen-ton",
+    author: "Thiên Tằm Thổ Đậu",
+    description:
+      "Một tác phẩm mới của Thiên Tằm Thổ Đậu, tác giả của Đấu Phá Thương Khung và Vũ Động Càn Khôn. Câu chuyện về hành trình trở thành Nguyên Tôn của nhân vật chính.",
+    cover: "/placeholder.svg?height=128&width=96",
+    chapters: 986,
+    status: "Đang ra",
+    rating: 4.6,
+    views: 5800000,
+  },
+  {
     id: 9,
     title: "Tru Tiên",
     slug: "tru-tien",
@@ -205,40 +218,42 @@ const completeStories = [
     views: 5500000,
   },
   {
-    id: 14,
-    title: "Đấu La Đại Lục",
-    slug: "dau-la-dai-luc",
-    author: "Đường Gia Tam Thiếu",
-    description: "Một câu chuyện về hành trình tu luyện của Đường Tam trên Đấu La Đại Lục.",
-    cover: "/placeholder.svg?height=128&width=96",
-    chapters: 2134,
-    status: "Hoàn thành",
-    rating: 4.7,
-    views: 7800000,
-  },
-  {
-    id: 15,
-    title: "Toàn Chức Pháp Sư",
-    slug: "toan-chuc-phap-su",
-    author: "Mạc Mặc",
-    description: "Một câu chuyện về hành trình trở thành pháp sư toàn năng của Mạc Phàm.",
-    cover: "/placeholder.svg?height=128&width=96",
-    chapters: 1876,
-    status: "Hoàn thành",
-    rating: 4.6,
-    views: 5100000,
-  },
-  {
-    id: 16,
-    title: "Tiên Đạo Chí Tôn",
-    slug: "tien-dao-chi-ton",
-    author: "Nhĩ Căn",
+    id: 4,
+    title: "Thần Đạo Đan Tôn",
+    slug: "than-dao-dan-ton",
+    author: "Cô Đơn Địa Phi",
     description:
-      "Một câu chuyện về hành trình tu tiên của Lý Thần, từ một thiếu niên bình thường trở thành một vị tiên đạo chí tôn.",
+      "Một thiếu niên bị gia tộc ruồng bỏ, nhưng lại có được kỳ ngộ, từ đó bước lên con đường tu luyện, trở thành một Đan Tôn danh chấn thiên hạ.",
     cover: "/placeholder.svg?height=128&width=96",
-    chapters: 1543,
-    status: "Hoàn thành",
+    chapters: 1245,
+    status: "Đang ra",
     rating: 4.5,
-    views: 4800000,
+    views: 4500000,
+  },
+  {
+    id: 5,
+    title: "Vạn Cổ Thần Đế",
+    slug: "van-co-than-de",
+    author: "Phi Thiên Ngư",
+    description:
+      "Trương Nhược Trần, thiên tài một đời bị hãm hại chết, trùng sinh về thời niên thiếu. Từ một thiếu niên không có căn cơ tu luyện, một bước một bước đi đến đỉnh phong.",
+    cover: "/placeholder.svg?height=128&width=96",
+    chapters: 3562,
+    status: "Đang ra",
+    rating: 4.4,
+    views: 3900000,
+  },
+  {
+    id: 6,
+    title: "Linh Vũ Thiên Hạ",
+    slug: "linh-vu-thien-ha",
+    author: "Vũ Phong",
+    description:
+      "Trong thế giới nơi linh khí là nguồn sức mạnh, Tần Vũ là một thiếu niên có ước mơ trở thành một cường giả đứng trên đỉnh cao của thế giới tu luyện.",
+    cover: "/placeholder.svg?height=128&width=96",
+    chapters: 1789,
+    status: "Đang ra",
+    rating: 4.3,
+    views: 3200000,
   },
 ]

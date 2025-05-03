@@ -12,25 +12,25 @@ import { StoryCard } from "@/components/story-card"
 
 export default async function Home() {
     // const { user } = useAuth()
-    const [hotStories, newStories, completeStories, suggestStories] =
+    const [hotStories, newChapter, completeStories, suggestStories] =
         await Promise.all([
             fetch(
-                "https://backend.metruyencv.com/api/readings/realtime?duration=60&limit=5&page=1"
+                "https://backend.metruyencv.com/api/readings/realtime?duration=60&limit=10&page=1"
             )
                 .then((res) => res.json())
                 .then((data) => data.data),
             fetch(
-                "https://backend.metruyencv.com/api/books?filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=5&page=1&sort=-view_count"
+                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=10&page=1&sort=-new_chap_at"
             )
                 .then((res) => res.json())
                 .then((data) => data.data),
             fetch(
-                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Bstatus%5D=2&include=author%2Cgenres%2Ccreator&limit=5&page=1&sort=-new_chap_at"
+                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Bstatus%5D=2&include=author%2Cgenres%2Ccreator&limit=10&page=1&sort=-new_chap_at"
             )
                 .then((res) => res.json())
                 .then((data) => data.data),
             fetch(
-                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Btype%5D=picked&include=author%2Cgenres%2Ccreator&limit=5&page=1&sort=-new_chap_at"
+                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Btype%5D=picked&include=author%2Cgenres%2Ccreator&limit=10&page=1&sort=-new_chap_at"
             )
                 .then((res) => res.json())
                 .then((data) => data.data),
@@ -39,12 +39,12 @@ export default async function Home() {
         <div className="container mx-auto px-4 py-6">
             <SlidingBanner />
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                <div className="md:col-span-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+                <div className="md:col-span-4">
                     <Tabs defaultValue="hot" className="mb-8">
                         <TabsList className="mb-4">
-                            <TabsTrigger value="hot">Truyện Hot</TabsTrigger>
-                            <TabsTrigger value="new">Lượt Xem</TabsTrigger>
+                            <TabsTrigger value="hot">Đề cử</TabsTrigger>
+                            <TabsTrigger value="new">Truyện hot</TabsTrigger>
                             <TabsTrigger value="complete">
                                 Hoàn Thành
                             </TabsTrigger>
@@ -52,7 +52,28 @@ export default async function Home() {
                                 <TabsTrigger value="my">My Truyện</TabsTrigger>
                             )} */}
                         </TabsList>
-                        <TabsContent value="hot" className="space-y-4">
+                        <TabsContent
+                            value="hot"
+                            className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+                        >
+                            {suggestStories.map((story: Story) => (
+                                <StoryCard key={story.id} story={story} />
+                            ))}
+
+                            <div className="col-span-1 lg:col-span-2 flex justify-center mt-6">
+                                <Button variant="outline" asChild>
+                                    <Link
+                                        href="/truyen-de-cu"
+                                        className="flex items-center gap-1"
+                                    >
+                                        Xem tất cả
+                                        <ChevronRight className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="new" className="space-y-4">
                             {hotStories.map(
                                 (story: HotStory) => (
                                     (story.book.reading_count =
@@ -69,7 +90,7 @@ export default async function Home() {
                             <div className="flex justify-center mt-6">
                                 <Button variant="outline" asChild>
                                     <Link
-                                        href="/hot-stories"
+                                        href="/truyen-hot"
                                         className="flex items-center gap-1"
                                     >
                                         Xem tất cả
@@ -79,25 +100,7 @@ export default async function Home() {
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="new" className="space-y-4">
-                            {newStories.map((story: Story) => (
-                                <StoryCard key={story.id} story={story} />
-                            ))}
-
-                            <div className="flex justify-center mt-6">
-                                <Button variant="outline" asChild>
-                                    <Link
-                                        href="/new-stories"
-                                        className="flex items-center gap-1"
-                                    >
-                                        Xem tất cả
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </div>
-                        </TabsContent>
-
-                        <TabsContent value="complete" className="space-y-4">
+                        <TabsContent value="complete" className="space-y-4 ">
                             {completeStories.map((story: Story) => (
                                 <StoryCard key={story.id} story={story} />
                             ))}
@@ -105,7 +108,7 @@ export default async function Home() {
                             <div className="flex justify-center mt-6">
                                 <Button variant="outline" asChild>
                                     <Link
-                                        href="/complete-stories"
+                                        href="/truyen-hoan-thanh"
                                         className="flex items-center gap-1"
                                     >
                                         Xem tất cả
@@ -164,8 +167,8 @@ export default async function Home() {
                     </Tabs>
                 </div>
 
-                <div className="md:col-span-1">
-                    {/* <div className="border rounded-lg p-4 mb-6">
+                {/* <div className="md:col-span-1">
+                    <div className="border rounded-lg p-4 mb-6">
                         <h2 className="text-lg font-semibold mb-4">Thể Loại</h2>
                         <div className="grid grid-cols-2 gap-2">
                             {categories.map((category) => (
@@ -178,7 +181,7 @@ export default async function Home() {
                                 </Link>
                             ))}
                         </div>
-                    </div> */}
+                    </div>
 
                     <div className="border rounded-lg p-4">
                         <h2 className="text-lg font-semibold mb-4">Đề cử</h2>
@@ -191,7 +194,7 @@ export default async function Home() {
                                         </div>
                                         <div>
                                             <Link
-                                                href={`/story/${story.slug}`}
+                                                href={`/truyen/${story.slug}`}
                                                 className="font-medium hover:text-primary hover:underline"
                                             >
                                                 {story.name}
@@ -205,10 +208,10 @@ export default async function Home() {
                             )}
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
 
-            <RecentStories />
+            <RecentStories stories={newChapter} />
         </div>
     )
 }

@@ -117,13 +117,13 @@ export default async function StoryPage({ params }: Props) {
 
                     <div className="flex gap-3 mb-6">
                         <Button asChild>
-                            <Link href={`/story/${story.slug}/chapter/1`}>
+                            <Link href={`/truyen/${story.slug}/chapter/1`}>
                                 Đọc từ đầu
                             </Link>
                         </Button>
                         <Button asChild variant="outline">
                             <Link
-                                href={`/story/${story.slug}/chapter/${story.chapter_count}`}
+                                href={`/truyen/${story.slug}/chapter/${story.chapter_count}`}
                             >
                                 Chương mới nhất
                             </Link>
@@ -149,7 +149,7 @@ export default async function StoryPage({ params }: Props) {
                         {chapterTitle.slice(0, 30).map((data: ChapterTitle) => (
                             <Link
                                 key={data.id}
-                                href={`/story/${story.slug}/chapter/${data.index}`}
+                                href={`/truyen/${story.slug}/chuong/${data.index}`}
                                 className="p-2 hover:bg-muted rounded text-sm w-full flex-col"
                             >
                                 <span className="font-semibold">

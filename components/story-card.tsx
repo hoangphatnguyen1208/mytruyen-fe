@@ -16,12 +16,12 @@ export function StoryCard({ story }: { story: Story }) {
                 <div className="flex justify-between items-start">
                     <div>
                         <Link
-                            href={`/story/${story.slug}`}
-                            className="text-lg font-semibold hover:text-primary hover:underline"
+                            href={`/truyen/${story.slug}`}
+                            className="text-lg font-semibold hover:text-primary hover:underline line-clamp-1"
                         >
                             {story.name}
                         </Link>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground line-clamp-1">
                             {story.author.name}
                         </p>
                     </div>
