@@ -11,6 +11,7 @@ import { BackToTop } from "@/components/back-to-top"
 import { Toaster } from "@/components/ui/toaster"
 import { LanguageProvider } from "@/contexts/language-context"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -52,6 +53,7 @@ export default function RootLayout({
                     </LanguageProvider>
                 </ThemeProvider>
                 <SpeedInsights />
+                <Analytics />
             </body>
         </html>
     )

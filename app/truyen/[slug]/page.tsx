@@ -33,6 +33,7 @@ export default async function StoryPage({ params }: Props) {
     const chapter_res = await fetch(
         `https://backend.metruyencv.com/api/chapters?filter%5Bbook_id%5D=${story.id}&filter%5Btype%5D=published`
     )
+
     const chapter_data = await chapter_res.json()
     const chapterTitle: ChapterTitle[] = chapter_data.data
     if (!story) {
