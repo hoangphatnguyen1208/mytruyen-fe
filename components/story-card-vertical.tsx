@@ -2,7 +2,7 @@ import { BookOpen, Eye, Star, PenLine, Radio } from "lucide-react"
 import Link from "next/link"
 import { Story } from "@/types/api"
 
-export function StoryCard({ story }: { story: Story }) {
+export function StoryCardVertical({ story }: { story: Story }) {
     return (
         <div className="flex border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
             <div className="w-[105px] h-[140px] flex-shrink-0">
@@ -22,7 +22,7 @@ export function StoryCard({ story }: { story: Story }) {
                             {story.name}
                         </Link>
                         <p className="text-sm text-muted-foreground line-clamp-1">
-                            {story.author.name}
+                            {story.author?.name}
                         </p>
                     </div>
                     <div className="flex items-center text-amber-500">

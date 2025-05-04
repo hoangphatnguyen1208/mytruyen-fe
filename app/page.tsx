@@ -8,11 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SlidingBanner } from "@/components/sliding-banner"
 import { RecentStories } from "@/components/recent-stories"
 import { Story, HotStory } from "@/types/api"
-import { StoryCard } from "@/components/story-card"
+import { StoryCardVertical } from "@/components/story-card-vertical"
+import { ListStories } from "@/components/list-stories"
 
 export default async function Home() {
     // const { user } = useAuth()
-    const [hotStories, newChapter, completeStories, suggestStories] =
+    const [hotList, newChapter, completeStories, suggestStories] =
         await Promise.all([
             fetch(
                 "https://backend.metruyencv.com/api/readings/realtime?duration=60&limit=10&page=1"
@@ -35,6 +36,12 @@ export default async function Home() {
                 .then((res) => res.json())
                 .then((data) => data.data),
         ])
+    const hotStories = hotList.map((story: HotStory) => {
+        story.book.reading_count = story.reading_count
+        return {
+            ...story.book,
+        }
+    })
     return (
         <div className="container mx-auto px-4 py-6">
             <SlidingBanner />
@@ -54,17 +61,16 @@ export default async function Home() {
                         </TabsList>
                         <TabsContent
                             value="hot"
-                            className="grid grid-cols-1 lg:grid-cols-2 gap-4"
                         >
-                            {suggestStories.map((story: Story) => (
-                                <StoryCard key={story.id} story={story} />
-                            ))}
-
-                            <div className="col-span-1 lg:col-span-2 flex justify-center mt-6">
+                            <ListStories
+                                stories={suggestStories}
+                                horizontal={false}
+                            />
+                            <div className="flex justify-center mt-6">
                                 <Button variant="outline" asChild>
                                     <Link
-                                        href="/truyen-de-cu"
-                                        className="flex items-center gap-1"
+                                    href="/truyen-de-cu"
+                                    className="flex items-center gap-1"
                                     >
                                         Xem tất cả
                                         <ChevronRight className="h-4 w-4" />
@@ -73,19 +79,11 @@ export default async function Home() {
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="new" className="space-y-4">
-                            {hotStories.map(
-                                (story: HotStory) => (
-                                    (story.book.reading_count =
-                                        story.reading_count),
-                                    (
-                                        <StoryCard
-                                            key={story.book.id}
-                                            story={story.book}
-                                        />
-                                    )
-                                )
-                            )}
+                        <TabsContent value="new">
+                            <ListStories
+                                stories={hotStories}
+                                horizontal={false}
+                            />
 
                             <div className="flex justify-center mt-6">
                                 <Button variant="outline" asChild>
@@ -100,10 +98,11 @@ export default async function Home() {
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="complete" className="space-y-4 ">
-                            {completeStories.map((story: Story) => (
-                                <StoryCard key={story.id} story={story} />
-                            ))}
+                        <TabsContent value="complete">
+                            <ListStories
+                                stories={completeStories}
+                                horizontal={false}
+                            />
 
                             <div className="flex justify-center mt-6">
                                 <Button variant="outline" asChild>
@@ -132,7 +131,7 @@ export default async function Home() {
                                     {myStories.length > 0 ? (
                                         <>
                                             {myStories.map((story) => (
-                                                <StoryCard
+                                                <StoryCardVertical
                                                     key={story.id}
                                                     story={story}
                                                 />

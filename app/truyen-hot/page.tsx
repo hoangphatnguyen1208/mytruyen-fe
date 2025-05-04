@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import { BookOpen, Clock, Search, Star } from "lucide-react"
+import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
     Select,
@@ -58,7 +57,7 @@ export default function HotStoriesPage() {
             </div>
 
             <div className="space-y-4 mb-6">
-                {filteredStories.length > 0 ? (
+                {/* {filteredStories.length > 0 ? (
                     filteredStories.map((story) => (
                         <StoryCard key={story.id} story={story} />
                     ))
@@ -68,7 +67,7 @@ export default function HotStoriesPage() {
                             Không tìm thấy truyện phù hợp
                         </p>
                     </div>
-                )}
+                )} */}
             </div>
 
             <Pagination>
