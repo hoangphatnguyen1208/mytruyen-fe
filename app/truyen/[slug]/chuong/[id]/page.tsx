@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
-export default function ChapterPage() {
+export default async function ChapterPage() {
     const params = useParams()
     const slug = params.slug as string
     const id = params.id as string
@@ -15,24 +15,12 @@ export default function ChapterPage() {
 
     // In a real app, you would fetch the story and chapter data based on the slug and id
     const story = getStoryBySlug(slug)
-    const chapter = getChapter(slug, chapterId)
+    const chapter = await fetch(
+        `/api/stories/${slug}/chapter/${chapterId}`
+    ).then((res) => res.json())
 
     const [fontSize, setFontSize] = useState("medium")
     const [progress, setProgress] = useState(0)
-
-    // Update reading progress
-    useEffect(() => {
-        const handleScroll = () => {
-            const scrollTop = window.scrollY
-            const docHeight = document.documentElement.scrollHeight
-            const winHeight = window.innerHeight
-            const scrollPercent = scrollTop / (docHeight - winHeight)
-            setProgress(scrollPercent * 100)
-        }
-
-        window.addEventListener("scroll", handleScroll)
-        return () => window.removeEventListener("scroll", handleScroll)
-    }, [])
 
     if (!story || !chapter) {
         return (
@@ -108,9 +96,7 @@ export default function ChapterPage() {
                     Chương {chapterId}: {chapter.title}
                 </h2>
 
-                <div
-                    className={`prose dark:prose-invert max-w-none ${fontSizeClasses[fontSize]}`}
-                >
+                <div className={`prose dark:prose-invert max-w-none`}>
                     {chapter.content.map((paragraph, index) => (
                         <p key={index} className="mb-4 leading-relaxed">
                             {paragraph}
