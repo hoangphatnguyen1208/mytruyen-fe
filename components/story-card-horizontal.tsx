@@ -4,11 +4,11 @@ import { Story } from "@/types/api"
 
 export function StoryCardHorizontal({ story }: { story: Story }) {
     return (
-        <div className="flex flex-wrap gap-4 mb-12">
+        <div className="flex flex-wrap gap-4 mb-2">
             <Link
                 key={story.id}
                 href={`/truyen/${story.slug}`}
-                className="w-[280px] group flex flex-col overflow-hidden rounded-lg border bg-card hover:shadow-md transition-all"
+                className="w-[235px] group flex flex-col overflow-hidden rounded-lg border bg-card hover:shadow-md transition-all"
             >
                 <div className="relative w-full overflow-hidden">
                     <img

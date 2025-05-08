@@ -33,7 +33,7 @@ export function StoryCardVertical({ story }: { story: Story }) {
                     </div>
                 </div>
                 <p className="text-sm mt-2 line-clamp-2">{story.synopsis}</p>
-                <div className="flex gap-4 mt-3 text-xs text-muted-foreground">
+                <div className="flex flex-1 gap-4 mt-3 text-xs text-muted-foreground">
                     <div className="flex items-center">
                         <BookOpen className="h-3 w-3 mr-1" />
                         {story.chapter_count} chương
@@ -53,6 +53,9 @@ export function StoryCardVertical({ story }: { story: Story }) {
                             {story.view_count}
                         </div>
                     )}
+                    <button className="ml-auto outline outline-1 text-amber-700 outline-amber-700 rounded-md">
+                        <p className="p-1">{story.genres[0].name}</p>
+                    </button>
                 </div>
             </div>
         </div>

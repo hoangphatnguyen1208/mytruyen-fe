@@ -59,62 +59,30 @@ export default async function Home() {
                                 <TabsTrigger value="my">My Truyện</TabsTrigger>
                             )} */}
                         </TabsList>
-                        <TabsContent
-                            value="hot"
-                        >
+                        <TabsContent value="hot">
                             <ListStories
                                 stories={suggestStories}
                                 horizontal={false}
+                                href="/truyen-de-cu"
                             />
-                            <div className="flex justify-center mt-6">
-                                <Button variant="outline" asChild>
-                                    <Link
-                                    href="/truyen-de-cu"
-                                    className="flex items-center gap-1"
-                                    >
-                                        Xem tất cả
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </div>
                         </TabsContent>
 
                         <TabsContent value="new">
                             <ListStories
                                 stories={hotStories}
                                 horizontal={false}
+                                href="/truyen-hot"
                             />
-
-                            <div className="flex justify-center mt-6">
-                                <Button variant="outline" asChild>
-                                    <Link
-                                        href="/truyen-hot"
-                                        className="flex items-center gap-1"
-                                    >
-                                        Xem tất cả
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </div>
                         </TabsContent>
 
                         <TabsContent value="complete">
                             <ListStories
                                 stories={completeStories}
                                 horizontal={false}
+                                href="/truyen-hoan-thanh"
                             />
 
-                            <div className="flex justify-center mt-6">
-                                <Button variant="outline" asChild>
-                                    <Link
-                                        href="/truyen-hoan-thanh"
-                                        className="flex items-center gap-1"
-                                    >
-                                        Xem tất cả
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </div>
+                            
                         </TabsContent>
 
                         {/* <TabsContent value="my" className="space-y-4">
@@ -209,8 +177,15 @@ export default async function Home() {
                     </div>
                 </div> */}
             </div>
-
-            <RecentStories stories={newChapter} />
+            <h2 className="text-xl font-semibold flex items-center">
+                <BookOpen className="mr-2 h-5 w-5 text-primary" />
+                Vừa cập nhật
+            </h2>
+            <ListStories
+                stories={newChapter}
+                horizontal={true}
+                href="/truyen-moi-cap-nhat"
+            />
         </div>
     )
 }
