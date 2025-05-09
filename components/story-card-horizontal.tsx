@@ -1,6 +1,8 @@
 import { Clock } from "lucide-react"
 import Link from "next/link"
 import { Story } from "@/types/api"
+import { formatDistanceToNow } from "date-fns"
+import { vi } from "date-fns/locale"
 
 export function StoryCardHorizontal({ story }: { story: Story }) {
     return (
@@ -19,7 +21,15 @@ export function StoryCardHorizontal({ story }: { story: Story }) {
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/100 to-transparent p-2">
                         <div className="flex items-center text-xs text-white">
                             <Clock className="h-3 w-3 mr-1" />
-                            <span>{story.new_chap_at}</span>
+                            <span>
+                                {formatDistanceToNow(
+                                    new Date(story.new_chap_at),
+                                    {
+                                        addSuffix: true,
+                                        locale: vi,
+                                    }
+                                )}
+                            </span>
                         </div>
                     </div>
                 </div>

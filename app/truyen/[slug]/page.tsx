@@ -102,7 +102,7 @@ export default async function StoryPage({ params }: Props) {
                             <span>
                                 Cập nhật:{" "}
                                 {formatDistanceToNow(
-                                    new Date(story.updated_at),
+                                    new Date(story.new_chap_at),
                                     {
                                         addSuffix: true,
                                         locale: vi,

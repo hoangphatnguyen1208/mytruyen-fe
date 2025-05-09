@@ -1,15 +1,13 @@
 // "use client"
 
 import Link from "next/link"
-import { BookOpen, Clock, Star, ChevronRight, Eye } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { BookOpen, Loader } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // import { useAuth } from "@/contexts/auth-context"
 import { SlidingBanner } from "@/components/sliding-banner"
-import { RecentStories } from "@/components/recent-stories"
 import { Story, HotStory } from "@/types/api"
-import { StoryCardVertical } from "@/components/story-card-vertical"
 import { ListStories } from "@/components/list-stories"
+import { NewChapter } from "@/components/new-chapter"
 
 export default async function Home() {
     // const { user } = useAuth()
@@ -81,111 +79,36 @@ export default async function Home() {
                                 horizontal={false}
                                 href="/truyen-hoan-thanh"
                             />
-
-                            
                         </TabsContent>
-
-                        {/* <TabsContent value="my" className="space-y-4">
-                            {user && (
-                                <>
-                                    <div className="text-center py-4">
-                                        <h3 className="text-lg font-medium">
-                                            Truyện của bạn
-                                        </h3>
-                                        <p className="text-muted-foreground">
-                                            Các truyện bạn đã lưu và theo dõi
-                                        </p>
-                                    </div>
-                                    {myStories.length > 0 ? (
-                                        <>
-                                            {myStories.map((story) => (
-                                                <StoryCardVertical
-                                                    key={story.id}
-                                                    story={story}
-                                                />
-                                            ))}
-
-                                            <div className="flex justify-center mt-6">
-                                                <Button
-                                                    variant="outline"
-                                                    asChild
-                                                >
-                                                    <Link
-                                                        href="/my-stories"
-                                                        className="flex items-center gap-1"
-                                                    >
-                                                        Xem tất cả
-                                                        <ChevronRight className="h-4 w-4" />
-                                                    </Link>
-                                                </Button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="text-center py-8 border rounded-lg">
-                                            <p className="text-muted-foreground">
-                                                Bạn chưa có truyện nào trong
-                                                danh sách
-                                            </p>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </TabsContent> */}
                     </Tabs>
                 </div>
-
-                {/* <div className="md:col-span-1">
-                    <div className="border rounded-lg p-4 mb-6">
-                        <h2 className="text-lg font-semibold mb-4">Thể Loại</h2>
-                        <div className="grid grid-cols-2 gap-2">
-                            {categories.map((category) => (
-                                <Link
-                                    key={category.id}
-                                    href={`/category/${category.slug}`}
-                                    className="text-sm hover:text-primary hover:underline"
-                                >
-                                    {category.name}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="border rounded-lg p-4">
-                        <h2 className="text-lg font-semibold mb-4">Đề cử</h2>
-                        <div className="space-y-4">
-                            {suggestStories.map(
-                                (story: Story, index: number) => (
-                                    <div key={story.id} className="flex gap-3">
-                                        <div className="font-bold text-muted-foreground">
-                                            {index + 1}
-                                        </div>
-                                        <div>
-                                            <Link
-                                                href={`/truyen/${story.slug}`}
-                                                className="font-medium hover:text-primary hover:underline"
-                                            >
-                                                {story.name}
-                                            </Link>
-                                            <p className="text-xs text-muted-foreground">
-                                                {story.author?.name}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )
-                            )}
-                        </div>
-                    </div>
-                </div> */}
             </div>
-            <h2 className="text-xl font-semibold flex items-center">
-                <BookOpen className="mr-2 h-5 w-5 text-primary" />
-                Vừa cập nhật
-            </h2>
-            <ListStories
-                stories={newChapter}
-                horizontal={true}
-                href="/truyen-moi-cap-nhat"
-            />
+            <div>
+                <h2 className="text-xl font-semibold flex items-center">
+                    <BookOpen className="mr-2 h-5 w-5 text-primary" />
+                    Vừa cập nhật
+                </h2>
+                <ListStories
+                    stories={newChapter}
+                    horizontal={true}
+                    href="/truyen-moi-cap-nhat"
+                />
+            </div>
+            <div>
+                <div className="flex justify-between">
+                    <h2 className="text-xl font-semibold flex items-center">
+                        <Loader className="mr-2 h-5 w-5 text-primary animate-spin"/>
+                        Vừa lên chương
+                    </h2>
+                    <Link
+                        href="/truyen-moi-len-chuong"
+                        className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                        Xem tất cả
+                    </Link>
+                </div>
+                <NewChapter />
+            </div>
         </div>
     )
 }
