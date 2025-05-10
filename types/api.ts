@@ -75,7 +75,7 @@ export interface HotStory {
     reading_count: number
 }
 
-export interface ChapterTitle {
+export interface ChapterDetail {
     id : number
     name : string
     index : number

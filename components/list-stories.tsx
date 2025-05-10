@@ -16,7 +16,7 @@ export function ListStories({ stories, horizontal, href }: Props) {
     return horizontal ? (
         <div className="w-full py-6">
             <div className="flex flex-wrap gap-4">
-                {stories.map((story) => (
+                {stories.slice(0, 12).map((story) => (
                     <StoryCardHorizontal key={story.id} story={story} />
                 ))}
             </div>

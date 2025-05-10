@@ -12,9 +12,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CommentSection } from "@/components/comment-section"
-import { Story, ChapterTitle } from "@/types/api"
+import { Story, ChapterDetail } from "@/types/api"
 import { formatDistanceToNow } from "date-fns"
 import { vi } from "date-fns/locale"
+import { ChaptersList } from "@/components/chapters-list"
 
 interface Props {
     params: {
@@ -35,7 +36,7 @@ export default async function StoryPage({ params }: Props) {
     )
 
     const chapter_data = await chapter_res.json()
-    const chapterTitle: ChapterTitle[] = chapter_data.data
+    const chapters_detail: ChapterDetail[] = chapter_data.data
     if (!story) {
         return (
             <div className="container mx-auto px-4 py-10">
@@ -140,36 +141,38 @@ export default async function StoryPage({ params }: Props) {
                 </div>
             </div>
 
-            <Tabs defaultValue="chapters">
+            {/* <Tabs defaultValue="chapters">
                 <TabsList className="mb-4">
                     <TabsTrigger value="chapters">Danh sách chương</TabsTrigger>
                     <TabsTrigger value="comments">Bình luận</TabsTrigger>
                 </TabsList>
                 <TabsContent value="chapters">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        {chapterTitle.slice(0, 30).map((data: ChapterTitle) => (
-                            <Link
-                                key={data.id}
-                                href={`/truyen/${story.slug}/chuong/${data.index}`}
-                                className="p-2 hover:bg-muted rounded text-sm w-full flex-col"
-                            >
-                                <span className="font-semibold">
-                                    {data.name}
-                                </span>
-                                <div className="flex">
-                                    <Clock className="h-4 w-3 inline mr-1 ml-1 text-muted-foreground" />
-                                    <div className="text-xs text-muted-foreground">
-                                        {formatDistanceToNow(
-                                            new Date(data.published_at),
-                                            {
-                                                addSuffix: true,
-                                                locale: vi,
-                                            }
-                                        )}
+                        {chapters_detail
+                            .slice(0, 30)
+                            .map((data: ChapterDetail) => (
+                                <Link
+                                    key={data.id}
+                                    href={`/truyen/${story.slug}/chuong/${data.index}`}
+                                    className="p-2 hover:bg-muted rounded text-sm w-full flex-col"
+                                >
+                                    <span className="font-semibold">
+                                        {data.name}
+                                    </span>
+                                    <div className="flex">
+                                        <Clock className="h-4 w-3 inline mr-1 ml-1 text-muted-foreground" />
+                                        <div className="text-xs text-muted-foreground">
+                                            {formatDistanceToNow(
+                                                new Date(data.published_at),
+                                                {
+                                                    addSuffix: true,
+                                                    locale: vi,
+                                                }
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            ))}
                     </div>
                     {story.chapter_count > 30 && (
                         <div className="mt-4 text-center">
@@ -231,12 +234,18 @@ export default async function StoryPage({ params }: Props) {
                         ]}
                     />
                 </TabsContent>
-            </Tabs>
+            </Tabs> */}
+
+            <h2 className="text-xl font-semibold flex items-center">
+                <List className="mr-2 h-5 w-5" />
+                Danh sách chương
+            </h2>
+            <ChaptersList story={story} />
         </div>
     )
 }
 
-function getChapterTitle(chapterNumber: number) {
+function getChapterDetail(chapterNumber: number) {
     const titles = [
         "Thiếu Niên Mất Đi Thiên Phú",
         "Thần Bí Lão Nhân",

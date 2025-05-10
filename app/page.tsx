@@ -19,7 +19,7 @@ export default async function Home() {
                 .then((res) => res.json())
                 .then((data) => data.data),
             fetch(
-                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=10&page=1&sort=-new_chap_at"
+                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=15&page=1&sort=-new_chap_at"
             )
                 .then((res) => res.json())
                 .then((data) => data.data),

@@ -4,20 +4,20 @@ import { Story } from "@/types/api"
 
 export function StoryCardVertical({ story }: { story: Story }) {
     return (
-        <div className="flex border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-            <div className="w-[105px] h-[140px] flex-shrink-0">
+        <div className="flex items-stretch border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+            <div className="w-32 flex-shrink-0 relative">
                 <img
-                    src={story.poster.default || "/placeholder.svg"}
+                    src={story.poster[150] || "/placeholder.svg"}
                     alt={story.name}
                     className="w-full h-full object-cover"
                 />
             </div>
-            <div className="flex-1 p-2">
-                <div className="flex justify-between items-start">
+            <div className="p-2 flex flex-col flex-1">
+                <div className="flex-none flex justify-between items-start">
                     <div>
                         <Link
                             href={`/truyen/${story.slug}`}
-                            className="text-lg font-semibold hover:text-primary hover:underline line-clamp-1"
+                            className="text-lg font-semibold hover:text-primary hover:underline line-clamp-2"
                         >
                             {story.name}
                         </Link>
@@ -32,8 +32,11 @@ export function StoryCardVertical({ story }: { story: Story }) {
                         </span>
                     </div>
                 </div>
-                <p className="text-sm mt-2 line-clamp-2">{story.synopsis}</p>
-                <div className="flex flex-1 gap-4 mt-3 text-xs text-muted-foreground">
+                <div className="flex-1 flex items-center">
+                    <p className="text-sm line-clamp-3">{story.synopsis}</p>
+                </div>
+
+                <div className="flex flex-none gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center">
                         <BookOpen className="h-3 w-3 mr-1" />
                         {story.chapter_count} chương
@@ -53,7 +56,7 @@ export function StoryCardVertical({ story }: { story: Story }) {
                             {story.view_count}
                         </div>
                     )}
-                    <button className="ml-auto outline outline-1 text-amber-700 outline-amber-700 rounded-md">
+                    <button className="item-center ml-auto mt-1 outline outline-1 text-amber-700 outline-amber-700 rounded-md h-auto">
                         <p className="p-1">{story.genres[0].name}</p>
                     </button>
                 </div>

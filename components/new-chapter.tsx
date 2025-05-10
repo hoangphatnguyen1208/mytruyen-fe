@@ -12,6 +12,7 @@ export function NewChapter() {
         const fetchNewChapter = () => {
             const params = new URLSearchParams({
                 "filter[gender]": "1",
+                "filter[state]": "published",
                 include: "author,genres,creator",
                 limit: "10",
                 page: "1",
@@ -33,7 +34,7 @@ export function NewChapter() {
         return () => clearInterval(interval)
     }, [])
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto my-4">
             {newChapters.map((story: Story) => (
                 <div
                     className="grid grid-cols-12 gap-2 min-h-10 hover:bg-muted px-2"
