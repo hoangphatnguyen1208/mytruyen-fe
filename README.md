@@ -1,6 +1,6 @@
 # MYTRUYEN - FRONTEND
 
-# 🚀 Features
+## 🚀 Features
 
 -   [x] List stories and chapter
 -   [x] Dark mode support
@@ -9,11 +9,11 @@
 -   [ ] Audio
 -   [ ] Optimize performance
 
-# Demo
+## Demo
 
 [mytruyen.vercel.app](https://mytruyen.vercel.app/)
 
-# Build with
+## Build with
 
 -   [Next.js](https://nextjs.org/) – React framework
 -   [TypeScript](https://www.typescriptlang.org/)
