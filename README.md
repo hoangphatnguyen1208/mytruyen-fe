@@ -1,30 +1,22 @@
-# Tạo trang web truyện
+# MYTRUYEN - FRONTEND
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+# 🚀 Features
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/hoangphat120805s-projects/v0-tao-trang-web-truyen)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/jYCiPRKVGd1)
+-   [x] List stories and chapter
+-   [x] Dark mode support
+-   [x] New chapter in realtime
+-   [ ] Story ranking
+-   [ ] Audio
+-   [ ] Optimize performance
 
-## Overview
+# Demo
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+[mytruyen.vercel.app](https://mytruyen.vercel.app/)
 
-## Deployment
+# Build with
 
-Your project is live at:
+-   [Next.js](https://nextjs.org/) – React framework
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [Tailwind CSS](https://tailwindcss.com/) – for styling
 
-**[https://vercel.com/hoangphat120805s-projects/v0-tao-trang-web-truyen](https://vercel.com/hoangphat120805s-projects/v0-tao-trang-web-truyen)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.dev/chat/projects/jYCiPRKVGd1](https://v0.dev/chat/projects/jYCiPRKVGd1)**
-
-## How It Works
-
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+## Installation
