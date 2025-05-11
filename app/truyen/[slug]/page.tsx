@@ -244,20 +244,3 @@ export default async function StoryPage({ params }: Props) {
         </div>
     )
 }
-
-function getChapterDetail(chapterNumber: number) {
-    const titles = [
-        "Thiếu Niên Mất Đi Thiên Phú",
-        "Thần Bí Lão Nhân",
-        "Đấu Khí Công Pháp",
-        "Bí Mật Hắc Viêm",
-        "Gặp Gỡ Nữ Chính",
-        "Tham Gia Khảo Hạch",
-        "Đột Phá Đấu Giả",
-        "Rời Khỏi Gia Tộc",
-        "Bái Nhập Học Viện",
-        "Kẻ Thù Cũ",
-    ]
-
-    return titles[chapterNumber % 10]
-}

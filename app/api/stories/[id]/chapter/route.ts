@@ -7,7 +7,9 @@ interface Props {
 }
 
 export async function GET(request: Request, { params }: Props) {
-    const url = `https://backend.metruyencv.com/api/chapters?filter%5Bbook_id%5D=${params.id}&filter%5Btype%5D=published`
+    const { id } = await params
+
+    const url = `https://backend.metruyencv.com/api/chapters?filter%5Bbook_id%5D=${id}&filter%5Btype%5D=published`
 
     try {
         const response = await fetch(url, {
