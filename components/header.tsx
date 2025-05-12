@@ -31,7 +31,7 @@ export function Header() {
   const searchRef = useRef<HTMLDivElement>(null)
 
   // Close suggestions when clicking outside
-  useOnClickOutside(searchRef, () => setShowSuggestions(false))
+  // useOnClickOutside(searchRef, () => setShowSuggestions(false))
 
   // Fetch suggestions when search query changes
   useEffect(() => {

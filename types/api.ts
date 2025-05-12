@@ -88,3 +88,14 @@ export interface ChapterDetail {
     is_locked : null
     object_type : string
 }
+
+export interface Banner {
+    id: number
+    name: string
+    slug: string
+    banner_desktop: string
+    banner_mobile: string
+    created_at: string
+    updated_at: string
+    owner_name: string
+}
