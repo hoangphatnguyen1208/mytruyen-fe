@@ -7,3 +7,9 @@ Host: https://mytruyen.vercel.app
 
 # Sitemaps
 Sitemap: https://mytruyen.vercel.app/sitemap.xml
+Sitemap: https://mytruyen.vercel.app/sitemap-0.xml
+Sitemap: https://mytruyen.vercel.app/sitemap-1.xml
+Sitemap: https://mytruyen.vercel.app/sitemap-2.xml
+Sitemap: https://mytruyen.vercel.app/sitemap-3.xml
+Sitemap: https://mytruyen.vercel.app/sitemap-4.xml
+Sitemap: https://mytruyen.vercel.app/sitemap-5.xml
