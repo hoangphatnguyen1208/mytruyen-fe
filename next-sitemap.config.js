@@ -1,17 +1,17 @@
-module.exports = {
-    siteUrl: process.env.SITE_URL || "https://mytruyen.vercel.app",
-    changefreq: "daily",
-    priority: 0.7,
-    sitemapSize: 5000,
-    exclude: ["/admin/*"],
-    transform: async (config, path) => {
-        return {
-            loc: path,
-            changefreq: "daily",
-            priority: 0.7,
-            lastmod: new Date().toISOString()
-        }
-    },
+// module.exports = {
+//     siteUrl: process.env.SITE_URL || "https://mytruyen.vercel.app",
+//     changefreq: "daily",
+//     priority: 0.7,
+//     sitemapSize: 5000,
+//     exclude: ["/admin/*"],
+//     transform: async (config, path) => {
+//         return {
+//             loc: path,
+//             changefreq: "daily",
+//             priority: 0.7,
+//             lastmod: new Date().toISOString()
+//         }
+//     },
 //     additionalPaths: async (config) => {
 //         let page = 1
 //         const paths = []
@@ -42,4 +42,4 @@ module.exports = {
 //         }
 //         return paths
 //     }
-}
+// }
