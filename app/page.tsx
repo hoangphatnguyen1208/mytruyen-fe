@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // import { useAuth } from "@/contexts/auth-context"
 import { SlidingBanner } from "@/components/sliding-banner"
 import { Story, HotStory } from "@/types/api"
-import { ListStories } from "@/components/list-stories"
+import { StoriesList } from "@/components/stories-list"
 import { NewChapter } from "@/components/new-chapter"
 
 export default async function Home() {
@@ -58,7 +58,7 @@ export default async function Home() {
                             )} */}
                         </TabsList>
                         <TabsContent value="hot">
-                            <ListStories
+                            <StoriesList
                                 stories={suggestStories}
                                 horizontal={false}
                                 href="/truyen-de-cu"
@@ -66,7 +66,7 @@ export default async function Home() {
                         </TabsContent>
 
                         <TabsContent value="new">
-                            <ListStories
+                            <StoriesList
                                 stories={hotStories}
                                 horizontal={false}
                                 href="/truyen-hot"
@@ -74,7 +74,7 @@ export default async function Home() {
                         </TabsContent>
 
                         <TabsContent value="complete">
-                            <ListStories
+                            <StoriesList
                                 stories={completeStories}
                                 horizontal={false}
                                 href="/truyen-hoan-thanh"
@@ -88,7 +88,7 @@ export default async function Home() {
                     <BookOpen className="mr-2 h-5 w-5 text-primary" />
                     Vừa cập nhật
                 </h2>
-                <ListStories
+                <StoriesList
                     stories={newChapter}
                     horizontal={true}
                     href="/truyen-moi-cap-nhat"

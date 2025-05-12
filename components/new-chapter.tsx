@@ -4,9 +4,11 @@ import { useEffect, useState } from "react"
 import { Story } from "@/types/api"
 import { vi } from "date-fns/locale/vi"
 import { formatDistanceToNow } from "date-fns"
+import { Loader } from "lucide-react"
 
 export function NewChapter() {
     const [newChapters, setNewChapters] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         const fetchNewChapter = () => {
@@ -20,7 +22,10 @@ export function NewChapter() {
             })
             fetch(`/api/search?${params.toString()}`)
                 .then((res) => res.json())
-                .then((data) => setNewChapters(data.data))
+                .then((data) => {
+                    setNewChapters(data.data)
+                    setIsLoading(false)
+                })
                 .catch((error) => {
                     console.error("Error fetching new chapters:", error)
                 })
@@ -33,6 +38,13 @@ export function NewChapter() {
         }, 60000) // 60 seconds
         return () => clearInterval(interval)
     }, [])
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-full">
+                <Loader className="animate-spin" />
+            </div>
+        )
+    }
     return (
         <div className="container mx-auto my-4">
             {newChapters.map((story: Story) => (

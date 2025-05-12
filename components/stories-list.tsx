@@ -12,7 +12,7 @@ interface Props {
     href: string
 }
 
-export function ListStories({ stories, horizontal, href }: Props) {
+export function StoriesList({ stories, horizontal, href }: Props) {
     return horizontal ? (
         <div className="w-full py-6">
             <div className="flex flex-wrap gap-4">
