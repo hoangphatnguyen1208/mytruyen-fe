@@ -6,7 +6,7 @@ import {
     Heart,
     List,
     Share2,
-    User,
+    User
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,21 @@ import { Story, ChapterDetail } from "@/types/api"
 import { formatDistanceToNow } from "date-fns"
 import { vi } from "date-fns/locale"
 import { ChaptersList } from "@/components/chapters-list"
+import { Metadata } from "next"
+
+export async function generateMetadata({
+    params
+}: {
+    params: { slug: string }
+}): Promise<Metadata> {
+    const { slug } = await params
+    const res = await fetch(
+        `https://backend.metruyencv.com/api/books/search?keyword=${slug}&page=1`
+    )
+    const data = await res.json()
+    const story = data.data[0]
+    return { title: story?.name || "Truyện" }
+}
 
 interface Props {
     params: {
@@ -106,7 +121,7 @@ export default async function StoryPage({ params }: Props) {
                                     new Date(story.new_chap_at),
                                     {
                                         addSuffix: true,
-                                        locale: vi,
+                                        locale: vi
                                     }
                                 )}
                             </span>

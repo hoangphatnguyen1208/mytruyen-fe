@@ -4,6 +4,23 @@ import Link from "next/link"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import type { Metadata } from "next"
+
+export async function generateMetadata({
+    params
+}: {
+    params: { slug: string; id: string }
+}): Promise<Metadata> {
+    const { slug, id } = params
+    const res = await fetch(
+        `https://backend.metruyencv.com/api/books/search?keyword=${slug}&page=1`
+    )
+    const json = await res.json()
+    const story = json.data[0]
+    return {
+        title: story?.name ? `${story.name} - Chương ${id}` : `Chương ${id}`
+    }
+}
 
 interface Props {
     params: {
@@ -43,7 +60,7 @@ export default async function ChapterPage({ params }: Props) {
         small: "text-sm",
         medium: "text-base",
         large: "text-lg",
-        xlarge: "text-xl",
+        xlarge: "text-xl"
     }
 
     return (
@@ -189,22 +206,22 @@ function getStoryBySlug(slug: string) {
             title: "Đấu Phá Thương Khung",
             slug: "dau-pha-thuong-khung",
             author: "Thiên Tàm Thổ Đậu",
-            chapters: 1665,
+            chapters: 1665
         },
         {
             id: 2,
             title: "Vũ Động Càn Khôn",
             slug: "vu-dong-can-khon",
             author: "Thiên Tàm Thổ Đậu",
-            chapters: 1321,
+            chapters: 1321
         },
         {
             id: 3,
             title: "Nguyên Tôn",
             slug: "nguyen-ton",
             author: "Thiên Tằm Thổ Đậu",
-            chapters: 986,
-        },
+            chapters: 986
+        }
     ]
 
     return stories.find((story) => story.slug === slug)
@@ -221,7 +238,7 @@ function getChapter(slug: string, id: number) {
         "Đột Phá Đấu Giả",
         "Rời Khỏi Gia Tộc",
         "Bái Nhập Học Viện",
-        "Kẻ Thù Cũ",
+        "Kẻ Thù Cũ"
     ]
 
     const content = [
@@ -237,11 +254,11 @@ function getChapter(slug: string, id: number) {
         '"Đúng vậy. Và ta có thể giúp ngươi lấy lại thiên phú tu luyện đã mất." Dược Lão nói, khiến Tiêu Viêm vô cùng kinh ngạc và mừng rỡ.',
         "Từ đó, cuộc đời của Tiêu Viêm bước sang một trang mới. Dưới sự chỉ dạy của Dược Lão, hắn dần lấy lại được thiên phú tu luyện, và còn mạnh mẽ hơn trước đây rất nhiều.",
         "Nhưng con đường phía trước vẫn còn nhiều chông gai. Tiêu Viêm phải đối mặt với những kẻ thù mạnh mẽ, những thế lực bí ẩn, và cả những bí mật về thân thế của mình.",
-        "Đây là câu chuyện về hành trình trưởng thành của Tiêu Viêm, từ một thiếu niên yếu đuối trở thành một cường giả đứng trên đỉnh cao của thế giới tu luyện.",
+        "Đây là câu chuyện về hành trình trưởng thành của Tiêu Viêm, từ một thiếu niên yếu đuối trở thành một cường giả đứng trên đỉnh cao của thế giới tu luyện."
     ]
 
     return {
         title: chapterTitles[id % 10],
-        content: content,
+        content: content
     }
 }
