@@ -76,17 +76,17 @@ export interface HotStory {
 }
 
 export interface ChapterDetail {
-    id : number
-    name : string
-    index : number
-    word_count : number
-    view_count : number
-    user_id : number
-    published_at : string
-    unlock_price : number
-    unlock_key_price : number
-    is_locked : null
-    object_type : string
+    id: number
+    name: string
+    index: number
+    word_count: number
+    view_count: number
+    user_id: number
+    published_at: string
+    unlock_price: number
+    unlock_key_price: number
+    is_locked: null
+    object_type: string
 }
 
 export interface Banner {
@@ -98,4 +98,21 @@ export interface Banner {
     created_at: string
     updated_at: string
     owner_name: string
+}
+
+export interface Comment {
+    id: number
+    content: string
+    userId: number
+    storyId: number
+    chapterId?: number
+    createdAt: string
+    updatedAt: string
+    likes: number
+    isLiked: boolean
+    user: {
+        id: number
+        name: string
+        avatar: string
+    }
 }

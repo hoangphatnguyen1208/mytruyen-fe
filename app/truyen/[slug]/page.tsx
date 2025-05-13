@@ -17,6 +17,8 @@ import { formatDistanceToNow } from "date-fns"
 import { vi } from "date-fns/locale"
 import { ChaptersList } from "@/components/chapters-list"
 import { Metadata } from "next"
+import { api } from "@/lib/api"
+import { NotFound } from "@/components/not-found"
 
 export async function generateMetadata({
     params
@@ -24,11 +26,7 @@ export async function generateMetadata({
     params: { slug: string }
 }): Promise<Metadata> {
     const { slug } = await params
-    const res = await fetch(
-        `https://backend.metruyencv.com/api/books/search?keyword=${slug}&page=1`
-    )
-    const data = await res.json()
-    const story = data.data[0]
+    const story = await api.story.getBySlug(slug)
     return { title: story?.name || "Truyện" }
 }
 
@@ -40,31 +38,10 @@ interface Props {
 
 export default async function StoryPage({ params }: Props) {
     const slug = (await params).slug
-    const story_res = await fetch(
-        `https://backend.metruyencv.com/api/books/search?keyword=${slug}&page=1`
-    )
-    const data = await story_res.json()
-    const story: Story = data.data[0]
-
-    const chapter_res = await fetch(
-        `https://backend.metruyencv.com/api/chapters?filter%5Bbook_id%5D=${story.id}&filter%5Btype%5D=published`
-    )
-
-    const chapter_data = await chapter_res.json()
-    const chapters_detail: ChapterDetail[] = chapter_data.data
+    const story = await api.story.getBySlug(slug)
+    const chapters_detail = story ? await api.story.getChapters(story.id) : []
     if (!story) {
-        return (
-            <div className="container mx-auto px-4 py-10">
-                <div className="text-center py-20">
-                    <h1 className="text-2xl font-bold mb-4">
-                        Truyện không tồn tại
-                    </h1>
-                    <Button asChild>
-                        <Link href="/">Quay về trang chủ</Link>
-                    </Button>
-                </div>
-            </div>
-        )
+        return <NotFound message="Truyện không tồn tại" />
     }
 
     return (

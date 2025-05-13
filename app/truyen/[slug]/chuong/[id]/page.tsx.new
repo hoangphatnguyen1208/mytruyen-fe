@@ -1,0 +1,112 @@
+import Link from "next/link"
+import { ArrowLeft, ArrowRight, BookOpen } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import type { Metadata } from "next"
+import { getStoryBySlug, getChapterById } from "@/lib/api"
+import { NotFound } from "@/components/not-found"
+
+export async function generateMetadata({
+    params
+}: {
+    params: { slug: string; id: string }
+}): Promise<Metadata> {
+    const { slug, id } = await params
+    const story = await getStoryBySlug(slug)
+    return {
+        title: story?.name ? `${story.name} - Chương ${id}` : `Chương ${id}`
+    }
+}
+
+interface Props {
+    params: {
+        slug: string
+        id: string
+    }
+}
+
+export default async function ChapterPage({ params }: Props) {
+    const { slug, id } = await params
+    const chapterId = Number.parseInt(id)
+
+    const story = await getStoryBySlug(slug)
+    const chapterContent = await getChapterById(slug, chapterId)
+    
+    if (!story || !chapterContent) {
+        return <NotFound message="Chương không tồn tại" />
+    }
+
+    // Parse chapter content
+    const lines = chapterContent.split('\n').filter(line => line.trim() !== '')
+
+    return (
+        <div className="max-w-3xl mx-auto px-4 py-6">
+            <div className="flex justify-between mb-6">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                >
+                    <Link
+                        href={`/truyen/${slug}`}
+                    >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Về trang truyện
+                    </Link>
+                </Button>
+            </div>
+
+            <div className="bg-card rounded-lg p-6 shadow-sm border">
+                <h1 className="text-xl font-semibold text-center mb-6">
+                    Chương {chapterId}
+                </h1>
+
+                <div className="prose dark:prose-invert max-w-none">
+                    {lines.map((paragraph, index) => (
+                        <p key={index} className="mb-4 leading-relaxed">
+                            {paragraph}
+                        </p>
+                    ))}
+                </div>
+            </div>
+
+            <div className="flex justify-between mt-6">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={chapterId <= 1}
+                    asChild
+                >
+                    <Link
+                        href={
+                            chapterId > 1
+                                ? `/truyen/${slug}/chuong/${chapterId - 1}`
+                                : `/truyen/${slug}/chuong/${chapterId}`
+                        }
+                    >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Chương trước
+                    </Link>
+                </Button>
+                
+                <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={chapterId >= story.chapter_count}
+                    asChild
+                >
+                    <Link
+                        href={
+                            chapterId < story.chapter_count
+                                ? `/truyen/${slug}/chuong/${chapterId + 1}`
+                                : `/truyen/${slug}/chuong/${chapterId}`
+                        }
+                    >
+                        Chương sau
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
+                </Button>
+            </div>
+        </div>
+    )
+}

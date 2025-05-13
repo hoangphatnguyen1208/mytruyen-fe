@@ -8,36 +8,28 @@ import { SlidingBanner } from "@/components/sliding-banner"
 import { Story, HotStory } from "@/types/api"
 import { StoriesList } from "@/components/stories-list"
 import { NewChapter } from "@/components/new-chapter"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "MyTruyen - Đọc truyện online",
+    description: "Đọc truyện online, truyện hay nhất, truyện hot, truyện full"
+}
+
+import { homeApi } from "@/lib/home-api"
 
 export default async function Home() {
     // const { user } = useAuth()
     const [hotList, newChapter, completeStories, suggestStories] =
         await Promise.all([
-            fetch(
-                "https://backend.metruyencv.com/api/readings/realtime?duration=60&limit=10&page=1"
-            )
-                .then((res) => res.json())
-                .then((data) => data.data),
-            fetch(
-                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=15&page=1&sort=-new_chap_at"
-            )
-                .then((res) => res.json())
-                .then((data) => data.data),
-            fetch(
-                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Bstatus%5D=2&include=author%2Cgenres%2Ccreator&limit=10&page=1&sort=-new_chap_at"
-            )
-                .then((res) => res.json())
-                .then((data) => data.data),
-            fetch(
-                "https://backend.metruyencv.com/api/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Btype%5D=picked&include=author%2Cgenres%2Ccreator&limit=10&page=1&sort=-new_chap_at"
-            )
-                .then((res) => res.json())
-                .then((data) => data.data),
+            homeApi.getHotStories(60, 10, 1),
+            homeApi.getNewChapters(15, 1),
+            homeApi.getCompletedStories(10, 1),
+            homeApi.getSuggestedStories(10, 1)
         ])
     const hotStories = hotList.map((story: HotStory) => {
         story.book.reading_count = story.reading_count
         return {
-            ...story.book,
+            ...story.book
         }
     })
     return (
@@ -97,7 +89,7 @@ export default async function Home() {
             <div>
                 <div className="flex justify-between">
                     <h2 className="text-xl font-semibold flex items-center">
-                        <Loader className="mr-2 h-5 w-5 text-primary animate-spin"/>
+                        <Loader className="mr-2 h-5 w-5 text-primary animate-spin" />
                         Vừa lên chương
                     </h2>
                     <Link

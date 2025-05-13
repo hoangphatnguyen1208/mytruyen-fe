@@ -1,22 +1,18 @@
-import { useState, useEffect } from "react"
 import Link from "next/link"
-// import { useParams } from "next/navigation"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight, BookOpen } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import type { Metadata } from "next"
+import { api } from "@/lib/api"
+import { NotFound } from "@/components/not-found"
 
 export async function generateMetadata({
     params
 }: {
     params: { slug: string; id: string }
 }): Promise<Metadata> {
-    const { slug, id } = params
-    const res = await fetch(
-        `https://backend.metruyencv.com/api/books/search?keyword=${slug}&page=1`
-    )
-    const json = await res.json()
-    const story = json.data[0]
+    const { slug, id } = await params
+    const story = await api.story.getBySlug(slug)
     return {
         title: story?.name ? `${story.name} - Chương ${id}` : `Chương ${id}`
     }
@@ -30,32 +26,15 @@ interface Props {
 }
 
 export default async function ChapterPage({ params }: Props) {
-    const { slug, id } = params
+    const { slug, id } = await params
     const chapterId = Number.parseInt(id)
 
-    const story = getStoryBySlug(slug)
-    const chapter = await fetch(
-        `http://localhost:3000/api/stories/${slug}/chapter/${chapterId}`
-    ).then((res) => res.text())
-
-    // const [fontSize, setFontSize] = useState("medium")
-    // const [progress, setProgress] = useState(0)
+    const story = await api.story.getBySlug(slug)
+    const chapter = await api.chapter.getById(slug, chapterId)
 
     if (!story || !chapter) {
-        return (
-            <div className="container mx-auto px-4 py-10">
-                <div className="text-center py-20">
-                    <h1 className="text-2xl font-bold mb-4">
-                        Chương không tồn tại
-                    </h1>
-                    <Button asChild>
-                        <Link href="/">Quay về trang chủ</Link>
-                    </Button>
-                </div>
-            </div>
-        )
+        return <NotFound message="Chương không tồn tại" />
     }
-
     const fontSizeClasses = {
         small: "text-sm",
         medium: "text-base",
@@ -63,139 +42,7 @@ export default async function ChapterPage({ params }: Props) {
         xlarge: "text-xl"
     }
 
-    return (
-        <div></div>
-        // <div className="max-w-3xl mx-auto px-4 py-6">
-        //     {/* Reading progress bar */}
-        //     <div className="w-full h-1 bg-muted mb-6">
-        //         <div
-        //             className="h-full bg-primary"
-        //             style={{ width: `${progress}%` }}
-        //         ></div>
-        //     </div>
-
-        //     <div className="flex justify-between mb-6">
-        //         <Button
-        //             variant="outline"
-        //             size="sm"
-        //             disabled={chapterId <= 1}
-        //             asChild
-        //         >
-        //             <Link
-        //                 href={
-        //                     chapterId > 1
-        //                         ? `/story/${slug}/chapter/${chapterId - 1}`
-        //                         : "#"
-        //                 }
-        //             >
-        //                 <ArrowLeft className="h-4 w-4 mr-2" />
-        //                 Chương trước
-        //             </Link>
-        //         </Button>
-        //         <Button
-        //             variant="outline"
-        //             size="sm"
-        //             disabled={chapterId >= story.chapters}
-        //             asChild
-        //         >
-        //             <Link
-        //                 href={
-        //                     chapterId < story.chapters
-        //                         ? `/story/${slug}/chapter/${chapterId + 1}`
-        //                         : "#"
-        //                 }
-        //             >
-        //                 Chương sau
-        //                 <ArrowRight className="h-4 w-4 ml-2" />
-        //             </Link>
-        //         </Button>
-        //     </div>
-
-        //     <div className="bg-card rounded-lg p-6 shadow-sm border">
-        //         <h2 className="text-xl font-semibold text-center mb-6">
-        //             Chương {chapterId}: {chapter.title}
-        //         </h2>
-
-        //         <div className={`prose dark:prose-invert max-w-none`}>
-        //             {chapter.content.map((paragraph, index) => (
-        //                 <p key={index} className="mb-4 leading-relaxed">
-        //                     {paragraph}
-        //                 </p>
-        //             ))}
-        //         </div>
-        //     </div>
-
-        //     <div className="flex justify-between mt-6">
-        //         <Button
-        //             variant="outline"
-        //             size="sm"
-        //             disabled={chapterId <= 1}
-        //             asChild
-        //         >
-        //             <Link
-        //                 href={
-        //                     chapterId > 1
-        //                         ? `/story/${slug}/chapter/${chapterId - 1}`
-        //                         : "#"
-        //                 }
-        //             >
-        //                 <ArrowLeft className="h-4 w-4 mr-2" />
-        //                 Chương trước
-        //             </Link>
-        //         </Button>
-        //         <Button
-        //             variant="outline"
-        //             size="sm"
-        //             disabled={chapterId >= story.chapters}
-        //             asChild
-        //         >
-        //             <Link
-        //                 href={
-        //                     chapterId < story.chapters
-        //                         ? `/story/${slug}/chapter/${chapterId + 1}`
-        //                         : "#"
-        //                 }
-        //             >
-        //                 Chương sau
-        //                 <ArrowRight className="h-4 w-4 ml-2" />
-        //             </Link>
-        //         </Button>
-        //     </div>
-
-        //     <div className="mt-8 border-t pt-6">
-        //         <h3 className="font-semibold mb-4">Bình luận</h3>
-        //         <div className="space-y-4">
-        //             <div className="border rounded-lg p-4">
-        //                 <div className="flex items-center gap-2 mb-2">
-        //                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs">
-        //                         TH
-        //                     </div>
-        //                     <div>
-        //                         <div className="font-medium text-sm">
-        //                             TruyenHayFan
-        //                         </div>
-        //                         <div className="text-xs text-muted-foreground">
-        //                             2 giờ trước
-        //                         </div>
-        //                     </div>
-        //                 </div>
-        //                 <p className="text-sm">
-        //                     Chương này hay quá! Không thể đợi đến chương tiếp
-        //                     theo.
-        //                 </p>
-        //             </div>
-        //         </div>
-        //         <div className="mt-4">
-        //             <textarea
-        //                 placeholder="Viết bình luận của bạn..."
-        //                 className="w-full p-3 border rounded-lg text-sm"
-        //                 rows={3}
-        //             ></textarea>
-        //             <Button className="mt-2">Gửi bình luận</Button>
-        //         </div>
-        //     </div>
-        // </div>
-    )
+    return <div className="max-w-3xl mx-auto px-4 py-6"></div>
 }
 
 // Helper functions and sample data

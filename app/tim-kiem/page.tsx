@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useLanguage } from "@/contexts/language-context"
 import { Story } from "@/types/api"
 import { StoriesList } from "@/components/stories-list"
+import { api } from "@/lib/api"
+
 export default function SearchPage() {
     const searchParams = useSearchParams()
     const query = searchParams.get("q") || ""
@@ -21,11 +23,8 @@ export default function SearchPage() {
         async function fetchSearchResults() {
             setLoading(true)
             try {
-                const response = await fetch(
-                    `/api/search?keyword=${encodeURIComponent(query)}&page=1&include=author%2Cgenres%2Ccreator`
-                )
-                const data = await response.json()
-                setStories(data.data)
+                const searchResults = await api.search.stories(query)
+                setStories(searchResults)
             } catch (error) {
                 console.error("Error fetching search results:", error)
             } finally {
@@ -40,7 +39,7 @@ export default function SearchPage() {
             setLoading(false)
         }
     }, [query])
-    console.log("stories", stories)
+    
 
     return (
         <div className="container mx-auto px-4 py-3">

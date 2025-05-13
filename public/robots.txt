@@ -1,12 +1,9 @@
-# *
+# Allow all web crawlers but block admin paths
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 # Sitemaps
 Sitemap: https://mytruyen.vercel.app/sitemap.xml
 Sitemap: https://mytruyen.vercel.app/sitemap-0.xml
 Sitemap: https://mytruyen.vercel.app/sitemap-1.xml
-Sitemap: https://mytruyen.vercel.app/sitemap-2.xml
-Sitemap: https://mytruyen.vercel.app/sitemap-3.xml
-Sitemap: https://mytruyen.vercel.app/sitemap-4.xml
-Sitemap: https://mytruyen.vercel.app/sitemap-5.xml
