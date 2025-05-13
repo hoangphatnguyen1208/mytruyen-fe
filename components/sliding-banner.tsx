@@ -98,8 +98,8 @@ export function SlidingBanner() {
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
                 {bannerSlides.map((slide) => (
-                    <div className="flex-none w-full" key={slide.id}>
-                        <Link href={slide.slug} className="w-full h-full">
+                    <div className="flex-none w-full flex" key={slide.id}>
+                        <Link href={slide.slug} className="mx-auto">
                             <img
                                 src={
                                     isMobile
@@ -107,7 +107,7 @@ export function SlidingBanner() {
                                         : slide.banner_desktop
                                 }
                                 alt={slide.name}
-                                className="object-cover mx-auto"
+                                className="object-cover"
                             />
                         </Link>
                     </div>

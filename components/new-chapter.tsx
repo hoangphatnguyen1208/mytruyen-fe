@@ -18,9 +18,9 @@ export function NewChapter() {
                 include: "author,genres,creator",
                 limit: "10",
                 page: "1",
-                sort: "-new_chap_at",
+                sort: "-new_chap_at"
             })
-            fetch(`/api/search?${params.toString()}`)
+            fetch(`/api/stories?${params.toString()}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setNewChapters(data.data)
@@ -79,7 +79,7 @@ export function NewChapter() {
                         <span className="text-sm text-muted-foreground truncate">
                             {formatDistanceToNow(new Date(story.new_chap_at), {
                                 addSuffix: true,
-                                locale: vi,
+                                locale: vi
                             })}
                         </span>
                     </div>

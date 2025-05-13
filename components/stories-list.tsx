@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react"
 interface Props {
     stories: Story[]
     horizontal: boolean
-    href: string
+    href?: string
 }
 
 export function StoriesList({ stories, horizontal, href }: Props) {
@@ -20,14 +20,14 @@ export function StoriesList({ stories, horizontal, href }: Props) {
                     <StoryCardHorizontal key={story.id} story={story} />
                 ))}
             </div>
-            <div className="flex justify-center mt-6">
+            {/* <div className="flex justify-center mt-6">
                 <Button variant="outline" asChild>
                     <Link href={href} className="flex items-center gap-1">
                         Xem tất cả
                         <ChevronRight className="h-4 w-4" />
                     </Link>
                 </Button>
-            </div>
+            </div> */}
         </div>
     ) : (
         <div>
@@ -36,14 +36,14 @@ export function StoriesList({ stories, horizontal, href }: Props) {
                     <StoryCardVertical key={story.id} story={story} />
                 ))}
             </div>
-            <div className="flex justify-center mt-6">
+            {/* <div className="flex justify-center mt-6">
                 <Button variant="outline" asChild>
                     <Link href={href} className="flex items-center gap-1">
                         Xem tất cả
                         <ChevronRight className="h-4 w-4" />
                     </Link>
                 </Button>
-            </div>
+            </div> */}
         </div>
     )
 }

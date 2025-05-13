@@ -57,7 +57,7 @@ export function StoryCardVertical({ story }: { story: Story }) {
                         </div>
                     )}
                     <button className="item-center ml-auto mt-1 outline outline-1 text-amber-700 outline-amber-700 rounded-md h-auto">
-                        <p className="p-1">{story.genres[0].name}</p>
+                        <p className="p-1">{story.genres? story.genres[0].name : ""}</p>
                     </button>
                 </div>
             </div>
