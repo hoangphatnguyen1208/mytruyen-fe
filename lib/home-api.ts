@@ -72,8 +72,8 @@ export const homeApi = {
             const data = await res.json()
             const stories = data.data || []
 
-            // Cache for 5 minutes
-            apiCache.set(cacheKey, stories, 5 * 60 * 1000)
+            // Cache for 30 seconds
+            apiCache.set(cacheKey, stories, 30 * 1000)
 
             return stories
         } catch (error) {
@@ -110,8 +110,8 @@ export const homeApi = {
             const data = await res.json()
             const stories = data.data || []
 
-            // Cache for 30 minutes (completed stories don't change often)
-            apiCache.set(cacheKey, stories, 30 * 60 * 1000)
+            // Cache for 1 minute (completed stories don't change often)
+            apiCache.set(cacheKey, stories, 1 * 60 * 1000)
 
             return stories
         } catch (error) {
@@ -148,8 +148,8 @@ export const homeApi = {
             const data = await res.json()
             const stories = data.data || []
 
-            // Cache for 15 minutes
-            apiCache.set(cacheKey, stories, 15 * 60 * 1000)
+            // Cache for 1 minute
+            apiCache.set(cacheKey, stories, 1 * 60 * 1000)
 
             return stories
         } catch (error) {
@@ -195,8 +195,8 @@ export const homeApi = {
                 owner_name: item.owner_name
             }))
 
-            // Cache for 1 hour
-            apiCache.set(cacheKey, banners, 60 * 60 * 1000)
+            // Cache for 1 minute
+            apiCache.set(cacheKey, banners, 1 * 60 * 1000)
 
             return banners
         } catch (error) {
