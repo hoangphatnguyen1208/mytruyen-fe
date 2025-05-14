@@ -1,13 +1,14 @@
 // "use client"
 
 import Link from "next/link"
-import { BookOpen, Loader } from "lucide-react"
+import { BookOpen, Loader, History } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // import { useAuth } from "@/contexts/auth-context"
 import { SlidingBanner } from "@/components/sliding-banner"
 import { Story, HotStory } from "@/types/api"
 import { StoriesList } from "@/components/stories-list"
 import { NewChapter } from "@/components/new-chapter"
+import { ReadingHistory } from "@/components/reading-history"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -35,7 +36,13 @@ export default async function Home() {
     return (
         <div className="container mx-auto px-4 py-6">
             <SlidingBanner />
-
+            <div className="mb-12">
+                <h2 className="text-xl font-semibold flex items-center mb-4">
+                    <History className="mr-2 h-5 w-5 text-primary" />
+                    Đọc gần đây
+                </h2>
+                <ReadingHistory />
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
                 <div className="md:col-span-4">
                     <Tabs defaultValue="hot" className="mb-8">

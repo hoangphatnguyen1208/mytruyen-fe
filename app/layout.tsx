@@ -21,12 +21,12 @@ export const metadata: Metadata = {
         "Đọc truyện online, truyện hay, truyện chữ, truyện full, truyện convert, truyện dịch, truyện hoàn thành.",
     generator: "v0.dev",
     verification: {
-        google: "QMfZdkAI3Z76eZ9z2LiHgGi--wt5x1V1UPFISsdC8Bg",
-    },
+        google: "QMfZdkAI3Z76eZ9z2LiHgGi--wt5x1V1UPFISsdC8Bg"
+    }
 }
 
 export default function RootLayout({
-    children,
+    children
 }: {
     children: React.ReactNode
 }) {
@@ -50,10 +50,17 @@ export default function RootLayout({
                             <BackToTop />
                             <Toaster />
                         </AuthProvider>
-                    </LanguageProvider>
+                    </LanguageProvider>{" "}
                 </ThemeProvider>
-                <SpeedInsights />
-                <Analytics />
+                {/* Wrap analytics in error boundaries */}
+                <div suppressHydrationWarning>
+                    {/* @ts-ignore */}
+                    <SpeedInsights fallback={<></>} />
+                </div>
+                <div suppressHydrationWarning>
+                    {/* @ts-ignore */}
+                    <Analytics fallback={<></>} />
+                </div>
             </body>
         </html>
     )

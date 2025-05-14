@@ -1,6 +1,7 @@
 import { Story, ChapterDetail, Comment } from "@/types/api"
 import { apiCache } from "./cache"
 import { applyMiddleware, withLogging } from "./middleware"
+import { retry } from "./retry"
 
 const API_BASE_URL = "https://backend.metruyencv.com/api"
 
@@ -22,10 +23,11 @@ export const api = {
                     return cachedStory
                 }
                 const res = await fetchWithMiddleware(
-                    `${API_BASE_URL}/books/search?keyword=${slug}&page=1`
+                    `/api/books/search?keyword=${slug}&page=1`
                 )
                 const data = await res.json()
                 const story = data.data[0] || null
+                console.log("story", story)
 
                 // Cache the response for 10 minutes
                 if (story) {
@@ -41,8 +43,7 @@ export const api = {
 
         /**
          * Get chapters for a story
-         */
-        getChapters: async (
+         */ getChapters: async (
             storyId: number | string
         ): Promise<ChapterDetail[]> => {
             try {
@@ -53,11 +54,13 @@ export const api = {
                 if (cachedChapters) {
                     return cachedChapters
                 }
+                // Use our local API proxy instead of calling the external API directly
                 const res = await fetchWithMiddleware(
-                    `${API_BASE_URL}/chapters?filter%5Bbook_id%5D=${storyId}&filter%5Btype%5D=published`
+                    `/api/chapters?filter[book_id]=${storyId}&filter[type]=published`
                 )
                 const data = await res.json()
                 const chapters = data.data || []
+                console.log("chapters", chapters)
 
                 // Cache the response for 5 minutes
                 apiCache.set(cacheKey, chapters, 5 * 60 * 1000)
@@ -67,9 +70,187 @@ export const api = {
                 console.error("Error fetching chapters:", error)
                 return []
             }
+        },
+
+        /**
+         * Get chapters for a story by page from API
+         * This method prepares for direct server-side pagination when the API supports it
+         */
+        getChaptersByPage: async (
+            storyId: number | string,
+            page: number = 1,
+            limit: number = 30
+        ): Promise<{
+            chapters: ChapterDetail[]
+            pagination: {
+                total: number
+                currentPage: number
+                perPage: number
+                totalPages: number
+            }
+        }> => {
+            try {
+                const cacheKey = `chapters_page_${storyId}_${page}_${limit}`
+
+                // Check cache first
+                const cachedResponse = apiCache.get<{
+                    chapters: ChapterDetail[]
+                    pagination: {
+                        total: number
+                        currentPage: number
+                        perPage: number
+                        totalPages: number
+                    }
+                }>(cacheKey)
+
+                if (cachedResponse) {
+                    return cachedResponse
+                } // Currently, we simulate pagination by getting all chapters and slicing
+                // In the future, this should be replaced with a direct API call that supports pagination
+                const res = await retry(
+                    async () => {
+                        return await fetchWithMiddleware(
+                            `/api/chapters?filter[book_id]=${storyId}&filter[type]=published`
+                        )
+                    },
+                    3, // 3 retries
+                    300 // 300ms initial delay
+                )
+
+                const data = await res.json()
+                const chapters = data.data || []
+
+                // Calculate total from the full list (server should provide this)
+                const total = chapters.length
+                const totalPages = Math.max(1, Math.ceil(total / limit))
+
+                // Create pagination data
+                const result = {
+                    chapters: chapters.slice((page - 1) * limit, page * limit),
+                    pagination: {
+                        total,
+                        currentPage: page,
+                        perPage: limit,
+                        totalPages
+                    }
+                }
+
+                // Cache the response for 5 minutes
+                apiCache.set(cacheKey, result, 5 * 60 * 1000)
+
+                return result
+            } catch (error) {
+                console.error("Error fetching chapters by page:", error)
+                return {
+                    chapters: [],
+                    pagination: {
+                        total: 0,
+                        currentPage: page,
+                        perPage: limit,
+                        totalPages: 0
+                    }
+                }
+            }
+        },
+        /**
+         * Get chapters for a story with pagination
+         */
+        getPaginatedChapters: async (
+            storyId: number | string,
+            page: number = 1,
+            limit: number = 30,
+            sortOrder: "asc" | "desc" = "desc",
+            searchTerm: string = ""
+        ): Promise<{
+            chapters: ChapterDetail[]
+            total: number
+            page: number
+            totalPages: number
+        }> => {
+            try {
+                // For paginated requests, build a unique cache key
+                const cacheKey = `chapters_paginated_${storyId}_${page}_${limit}_${sortOrder}_${searchTerm}`
+                const allChaptersCacheKey = `chapters_${storyId}`
+
+                // Check cache first
+                const cachedResponse = apiCache.get<{
+                    chapters: ChapterDetail[]
+                    total: number
+                    page: number
+                    totalPages: number
+                }>(cacheKey)
+
+                if (cachedResponse) {
+                    return cachedResponse
+                }
+
+                // First, we need to get all chapters to perform proper pagination
+                // In a real API, this would be handled server-side
+                // Use retry mechanism for resilience
+                let allChapters = await retry(
+                    () => api.story.getChapters(storyId),
+                    3, // 3 retries
+                    300 // 300ms initial delay
+                )
+
+                // Filter by search term if provided
+                if (searchTerm) {
+                    const searchLower = searchTerm.toLowerCase()
+                    allChapters = allChapters.filter(
+                        (chapter) =>
+                            chapter.name.toLowerCase().includes(searchLower) ||
+                            `Chương ${chapter.index}`
+                                .toLowerCase()
+                                .includes(searchLower)
+                    )
+                }
+
+                // Sort the chapters
+                const sortedChapters = [...allChapters].sort((a, b) => {
+                    if (sortOrder === "asc") {
+                        return a.index - b.index
+                    } else {
+                        return b.index - a.index
+                    }
+                })
+
+                // Calculate pagination values
+                const total = sortedChapters.length
+                const totalPages = Math.max(1, Math.ceil(total / limit))
+                const startIndex = (page - 1) * limit
+                const endIndex = startIndex + limit
+
+                // Get the paginated chapters
+                const paginatedChapters = sortedChapters.slice(
+                    startIndex,
+                    endIndex
+                )
+
+                const result = {
+                    chapters: paginatedChapters,
+                    total,
+                    page,
+                    totalPages
+                }
+
+                // Cache the response for 5 minutes
+                // Also register it as related to the main chapters cache
+                apiCache.set(cacheKey, result, 5 * 60 * 1000, [
+                    allChaptersCacheKey
+                ])
+
+                return result
+            } catch (error) {
+                console.error("Error fetching paginated chapters:", error)
+                return {
+                    chapters: [],
+                    total: 0,
+                    page: page,
+                    totalPages: 0
+                }
+            }
         }
     },
-
     chapter: {
         /**
          * Get a chapter by its ID
@@ -87,7 +268,7 @@ export const api = {
                     return cachedChapter
                 } // Using local API for chapter content
                 const res = await fetchWithMiddleware(
-                    `http://localhost:3000/api/stories/${slug}/chapter/${chapterId}`
+                    `/api/stories/${slug}/chapter/${chapterId}`
                 )
                 const chapterText = await res.text()
 
@@ -98,6 +279,104 @@ export const api = {
             } catch (error) {
                 console.error("Error fetching chapter:", error)
                 return ""
+            }
+        },
+
+        /**
+         * Check for updates to a chapter's content
+         * Returns true if the content has been updated since the last fetch
+         */
+        checkForUpdates: async (
+            slug: string,
+            chapterId: string | number
+        ): Promise<{ hasUpdates: boolean; updatedContent?: string }> => {
+            try {
+                const cacheKey = `chapter_${slug}_${chapterId}`
+
+                // Get the current timestamp for ETag/If-Modified-Since headers
+                const cachedChapterData =
+                    apiCache.getWithMetadata<string>(cacheKey)
+
+                // If we don't have cached data, there's nothing to compare
+                if (!cachedChapterData) {
+                    return { hasUpdates: false }
+                }
+
+                // Check if the content has been updated
+                const res = await fetchWithMiddleware(
+                    `/api/stories/${slug}/chapter/${chapterId}/check-updates`,
+                    {
+                        headers: {
+                            "If-Modified-Since": new Date(
+                                cachedChapterData.timestamp
+                            ).toUTCString()
+                        }
+                    }
+                )
+
+                // If server returns 304 Not Modified, no updates available
+                if (res.status === 304) {
+                    return { hasUpdates: false }
+                }
+
+                // If we get here, content has been updated
+                const updatedContent = await res.text()
+
+                // Update the cache with the new content
+                apiCache.set(cacheKey, updatedContent, 10 * 60 * 1000)
+
+                return {
+                    hasUpdates: true,
+                    updatedContent
+                }
+            } catch (error) {
+                console.error("Error checking for chapter updates:", error)
+                return { hasUpdates: false }
+            }
+        },
+
+        /**
+         * Get chapter navigation information (previous and next chapters)
+         */
+        getNavigation: async (
+            storyId: number | string,
+            currentChapterId: number
+        ): Promise<{
+            prev: ChapterDetail | null
+            next: ChapterDetail | null
+        }> => {
+            try {
+                const chapters = await api.story.getChapters(storyId)
+
+                // Sort chapters by index
+                const sortedChapters = [...chapters].sort(
+                    (a, b) => a.index - b.index
+                )
+
+                // Find current chapter index in the sorted array
+                const currentIndex = sortedChapters.findIndex(
+                    (c) => c.index === currentChapterId
+                )
+
+                // If chapter not found, return null for both
+                if (currentIndex === -1) {
+                    return { prev: null, next: null }
+                }
+
+                const prevChapter =
+                    currentIndex > 0 ? sortedChapters[currentIndex - 1] : null
+                const nextChapter =
+                    currentIndex < sortedChapters.length - 1
+                        ? sortedChapters[currentIndex + 1]
+                        : null
+
+                return {
+                    prev: prevChapter,
+                    next: nextChapter
+                }
+            } catch (error) {
+                console.error("Error fetching chapter navigation:", error)
+                return { prev: null, next: null }
             }
         }
     },
@@ -116,7 +395,7 @@ export const api = {
                     return cachedResults
                 }
                 const res = await fetchWithMiddleware(
-                    `${API_BASE_URL}/books/search?keyword=${keyword}&page=${page}`
+                    `/api/books/search?keyword=${keyword}&page=${page}`
                 )
                 const data = await res.json()
                 const results = data.data || []
@@ -148,10 +427,9 @@ export const api = {
                 if (cachedComments) {
                     return cachedComments
                 }
-
                 const url = chapterId
-                    ? `${API_BASE_URL}/comments?storyId=${storyId}&chapterId=${chapterId}`
-                    : `${API_BASE_URL}/comments?storyId=${storyId}`
+                    ? `/api/comments?storyId=${storyId}&chapterId=${chapterId}`
+                    : `/api/comments?storyId=${storyId}`
 
                 const res = await fetchWithMiddleware(url)
                 const data = await res.json()
@@ -176,16 +454,13 @@ export const api = {
             chapterId?: number
         }): Promise<Comment | null> => {
             try {
-                const res = await fetchWithMiddleware(
-                    `${API_BASE_URL}/comments`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(comment)
-                    }
-                )
+                const res = await fetchWithMiddleware(`/api/comments`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(comment)
+                })
 
                 const data = await res.json()
 
@@ -212,7 +487,7 @@ export const api = {
         ): Promise<Comment | null> => {
             try {
                 const res = await fetchWithMiddleware(
-                    `${API_BASE_URL}/comments/${commentId}`,
+                    `/api/comments/${commentId}`,
                     {
                         method: "PUT",
                         headers: {
@@ -240,12 +515,9 @@ export const api = {
          */
         delete: async (commentId: number): Promise<boolean> => {
             try {
-                await fetchWithMiddleware(
-                    `${API_BASE_URL}/comments/${commentId}`,
-                    {
-                        method: "DELETE"
-                    }
-                )
+                await fetchWithMiddleware(`/api/comments/${commentId}`, {
+                    method: "DELETE"
+                })
 
                 // Similar to update, we need to invalidate potentially affected caches
                 apiCache.clear()

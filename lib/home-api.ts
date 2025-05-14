@@ -1,11 +1,8 @@
-import { apiCache } from "./cache"
-import { applyMiddleware, withLogging } from "./middleware"
 import { Story, HotStory, ChapterDetail, Banner } from "@/types/api"
+import { apiCache } from "./cache"
 
+// This is a server component API, so we can directly call the backend API
 const API_BASE_URL = "https://backend.metruyencv.com/api"
-
-// Create a fetch function with middleware applied
-const fetchWithMiddleware = applyMiddleware([withLogging])
 
 export const homeApi = {
     /**
@@ -24,8 +21,15 @@ export const homeApi = {
             if (cachedStories) {
                 return cachedStories
             }
-            const res = await fetchWithMiddleware(
-                `${API_BASE_URL}/readings/realtime?duration=${duration}&limit=${limit}&page=${page}`
+            const res = await fetch(
+                `${API_BASE_URL}/readings/realtime?duration=${duration}&limit=${limit}&page=${page}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`
+                    },
+                    next: { revalidate: 600 } // Revalidate every 10 minutes
+                }
             )
             const data = await res.json()
             const stories = data.data || []
@@ -55,8 +59,15 @@ export const homeApi = {
             if (cachedStories) {
                 return cachedStories
             }
-            const res = await fetchWithMiddleware(
-                `${API_BASE_URL}/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=${limit}&page=${page}&sort=-new_chap_at`
+            const res = await fetch(
+                `${API_BASE_URL}/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=${limit}&page=${page}&sort=-new_chap_at`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`
+                    },
+                    next: { revalidate: 300 }
+                }
             )
             const data = await res.json()
             const stories = data.data || []
@@ -86,8 +97,15 @@ export const homeApi = {
             if (cachedStories) {
                 return cachedStories
             }
-            const res = await fetchWithMiddleware(
-                `${API_BASE_URL}/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Bstatus%5D=2&include=author%2Cgenres%2Ccreator&limit=${limit}&page=${page}&sort=-new_chap_at`
+            const res = await fetch(
+                `${API_BASE_URL}/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&filter%5Bstatus%5D=2&include=author%2Cgenres%2Ccreator&limit=${limit}&page=${page}&sort=-new_chap_at`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`
+                    },
+                    next: { revalidate: 1800 }
+                }
             )
             const data = await res.json()
             const stories = data.data || []
@@ -117,8 +135,15 @@ export const homeApi = {
             if (cachedStories) {
                 return cachedStories
             }
-            const res = await fetchWithMiddleware(
-                `${API_BASE_URL}/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=${limit}&page=${page}&sort=-view_count`
+            const res = await fetch(
+                `${API_BASE_URL}/books?filter%5Bgender%5D=1&filter%5Bstate%5D=published&include=author%2Cgenres%2Ccreator&limit=${limit}&page=${page}&sort=-view_count`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`
+                    },
+                    next: { revalidate: 900 }
+                }
             )
             const data = await res.json()
             const stories = data.data || []
@@ -145,11 +170,32 @@ export const homeApi = {
             if (cachedBanners) {
                 return cachedBanners
             }
-            const res = await fetchWithMiddleware(`${API_BASE_URL}/banners`)
+            // Fetch topboxes from backend
+            const res = await fetch(
+                `${API_BASE_URL}/topboxes?filter%5Btopboxable.kind%5D=1&limit=5`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`
+                    },
+                    next: { revalidate: 3600 }
+                }
+            )
             const data = await res.json()
-            const banners = data.data || []
+            // raw data expected under data.data
+            const items: any[] = Array.isArray(data.data) ? data.data : []
+            const banners: Banner[] = items.map((item) => ({
+                id: item.id,
+                name: item.name,
+                slug: item.url?.split(".com")[1] || new URL(item.url).pathname,
+                banner_desktop: item.banner_desktop || item.bg_desktop,
+                banner_mobile: item.banner_mobile,
+                created_at: item.created_at,
+                updated_at: item.updated_at,
+                owner_name: item.owner_name
+            }))
 
-            // Cache for 1 hour (banners don't change often)
+            // Cache for 1 hour
             apiCache.set(cacheKey, banners, 60 * 60 * 1000)
 
             return banners

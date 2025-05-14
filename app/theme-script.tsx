@@ -4,20 +4,28 @@ import { useEffect } from "react"
 import { useTheme } from "next-themes"
 
 export function ThemeScript() {
-  const { setTheme, theme } = useTheme()
+    const { setTheme, theme } = useTheme()
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme")
-    if (savedTheme) {
-      setTheme(savedTheme)
-    }
-  }, [setTheme])
+    useEffect(() => {
+        try {
+            const savedTheme = localStorage.getItem("theme")
+            if (savedTheme) {
+                setTheme(savedTheme)
+            }
+        } catch (error) {
+            console.error("Error accessing localStorage for theme:", error)
+        }
+    }, [setTheme])
 
-  useEffect(() => {
-    if (theme) {
-      localStorage.setItem("theme", theme)
-    }
-  }, [theme])
+    useEffect(() => {
+        try {
+            if (theme) {
+                localStorage.setItem("theme", theme)
+            }
+        } catch (error) {
+            console.error("Error setting theme in localStorage:", error)
+        }
+    }, [theme])
 
-  return null
+    return null
 }

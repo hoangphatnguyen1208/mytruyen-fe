@@ -16,8 +16,9 @@ import { Story, ChapterDetail } from "@/types/api"
 import { formatDistanceToNow } from "date-fns"
 import { vi } from "date-fns/locale"
 import { ChaptersList } from "@/components/chapters-list"
+import { BackToTop } from "@/components/back-to-top"
 import { Metadata } from "next"
-import { api } from "@/lib/api"
+import { serverApi } from "@/lib/server-api"
 import { NotFound } from "@/components/not-found"
 
 export async function generateMetadata({
@@ -26,7 +27,7 @@ export async function generateMetadata({
     params: { slug: string }
 }): Promise<Metadata> {
     const { slug } = await params
-    const story = await api.story.getBySlug(slug)
+    const story = await serverApi.story.getBySlug(slug)
     return { title: story?.name || "Truyện" }
 }
 
@@ -38,8 +39,10 @@ interface Props {
 
 export default async function StoryPage({ params }: Props) {
     const slug = (await params).slug
-    const story = await api.story.getBySlug(slug)
-    const chapters_detail = story ? await api.story.getChapters(story.id) : []
+    const story = await serverApi.story.getBySlug(slug)
+    const chapters_detail = story
+        ? await serverApi.story.getChapters(story.id)
+        : []
     if (!story) {
         return <NotFound message="Truyện không tồn tại" />
     }
@@ -133,106 +136,11 @@ export default async function StoryPage({ params }: Props) {
                 </div>
             </div>
 
-            {/* <Tabs defaultValue="chapters">
-                <TabsList className="mb-4">
-                    <TabsTrigger value="chapters">Danh sách chương</TabsTrigger>
-                    <TabsTrigger value="comments">Bình luận</TabsTrigger>
-                </TabsList>
-                <TabsContent value="chapters">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        {chapters_detail
-                            .slice(0, 30)
-                            .map((data: ChapterDetail) => (
-                                <Link
-                                    key={data.id}
-                                    href={`/truyen/${story.slug}/chuong/${data.index}`}
-                                    className="p-2 hover:bg-muted rounded text-sm w-full flex-col"
-                                >
-                                    <span className="font-semibold">
-                                        {data.name}
-                                    </span>
-                                    <div className="flex">
-                                        <Clock className="h-4 w-3 inline mr-1 ml-1 text-muted-foreground" />
-                                        <div className="text-xs text-muted-foreground">
-                                            {formatDistanceToNow(
-                                                new Date(data.published_at),
-                                                {
-                                                    addSuffix: true,
-                                                    locale: vi,
-                                                }
-                                            )}
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                    </div>
-                    {story.chapter_count > 30 && (
-                        <div className="mt-4 text-center">
-                            <Button variant="outline">Xem thêm</Button>
-                        </div>
-                    )}
-                </TabsContent>
-                <TabsContent value="comments">
-                    <CommentSection
-                        storyId={story.id.toString()}
-                        initialComments={[
-                            {
-                                id: "comment-1",
-                                user: {
-                                    id: "user-1",
-                                    name: "TruyenHayFan",
-                                    avatar: "",
-                                },
-                                content:
-                                    "Truyện hay quá! Mong tác giả ra chương mới sớm.",
-                                createdAt: new Date(
-                                    Date.now() - 2 * 24 * 60 * 60 * 1000
-                                ).toISOString(),
-                                likes: 5,
-                                isLiked: false,
-                                replies: [
-                                    {
-                                        id: "reply-1",
-                                        user: {
-                                            id: "user-2",
-                                            name: "NguyenVanA",
-                                            avatar: "",
-                                        },
-                                        content:
-                                            "Đồng ý! Tôi đang rất háo hức chờ đợi chương tiếp theo.",
-                                        createdAt: new Date(
-                                            Date.now() - 1 * 24 * 60 * 60 * 1000
-                                        ).toISOString(),
-                                        likes: 2,
-                                        isLiked: false,
-                                    },
-                                ],
-                            },
-                            {
-                                id: "comment-2",
-                                user: {
-                                    id: "user-3",
-                                    name: "ĐộcGiả123",
-                                    avatar: "",
-                                },
-                                content:
-                                    "Nhân vật chính quá mạnh, mong có thêm nhiều thử thách hơn.",
-                                createdAt: new Date(
-                                    Date.now() - 5 * 24 * 60 * 60 * 1000
-                                ).toISOString(),
-                                likes: 3,
-                                isLiked: true,
-                            },
-                        ]}
-                    />
-                </TabsContent>
-            </Tabs> */}
-
             <h2 className="text-xl font-semibold flex items-center">
-                <List className="mr-2 h-5 w-5" />
-                Danh sách chương
+                <List className="mr-2 h-5 w-5" /> Danh sách chương
             </h2>
             <ChaptersList story={story} />
+            <BackToTop />
         </div>
     )
 }
