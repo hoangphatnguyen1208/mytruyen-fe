@@ -4,7 +4,7 @@
 const READING_PREFS_KEY = "mytruyen_reading_prefs"
 
 export interface ReadingPreferences {
-    fontSize: "small" | "medium" | "large" | "xlarge"
+    fontSize: "small" | "medium" | "large" | "xlarge" | "xxlarge" | "xxxlarge"
     theme: "light" | "dark" | "system"
     fontFamily: string
     lineSpacing: number

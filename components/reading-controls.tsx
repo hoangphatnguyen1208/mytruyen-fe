@@ -13,12 +13,12 @@ import {
 import { getReadingPrefs, saveReadingPrefs } from "@/lib/reading-preferences"
 
 interface Props {
-    onFontSizeChange: (size: "small" | "medium" | "large" | "xlarge") => void
+    onFontSizeChange: (size: "small" | "medium" | "large" | "xlarge" | "xxlarge" | "xxxlarge") => void
 }
 
 export function ReadingControls({ onFontSizeChange }: Props) {
     const [currentFontSize, setCurrentFontSize] = useState<
-        "small" | "medium" | "large" | "xlarge"
+        "small" | "medium" | "large" | "xlarge" | "xxlarge" | "xxxlarge"
     >("medium")
     const { theme, setTheme } = useTheme()
 
@@ -34,7 +34,7 @@ export function ReadingControls({ onFontSizeChange }: Props) {
     }, [setTheme, onFontSizeChange])
 
     const handleFontSizeChange = (
-        size: "small" | "medium" | "large" | "xlarge"
+        size: "small" | "medium" | "large" | "xlarge" | "xxlarge" | "xxxlarge"
     ) => {
         setCurrentFontSize(size)
         onFontSizeChange(size)
@@ -87,6 +87,22 @@ export function ReadingControls({ onFontSizeChange }: Props) {
                         }
                     >
                         <span className="text-xl">Rất lớn</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => handleFontSizeChange("xxlarge")}
+                        className={
+                            currentFontSize === "xxlarge" ? "bg-accent" : ""
+                        }
+                    >
+                        <span className="text-2xl">Cực lớn</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => handleFontSizeChange("xxxlarge")}
+                        className={
+                            currentFontSize === "xxxlarge" ? "bg-accent" : ""
+                        }
+                    >
+                        <span className="text-3xl">Siêu lớn</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>{" "}

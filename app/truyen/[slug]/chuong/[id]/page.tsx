@@ -60,7 +60,7 @@ export default async function ChapterPage({ params }: Props) {
     const nextChapterId = navigation.next?.index || null
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="max-w-6xl mx-auto px-4 py-6">
             {" "}
             <header className="flex justify-between items-center mb-6">
                 <div>

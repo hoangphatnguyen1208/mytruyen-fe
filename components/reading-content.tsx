@@ -13,8 +13,8 @@ interface Props {
 
 export function ReadingContent({ content, slug, chapterId }: Props) {
     const [fontSize, setFontSize] = useState<
-        "small" | "medium" | "large" | "xlarge"
-    >("medium")
+        "small" | "medium" | "large" | "xlarge" | "xxlarge" | "xxxlarge"
+    >("xlarge")
     const [currentContent, setCurrentContent] = useState(content)
 
     // Load saved font size preference on component mount
@@ -32,14 +32,17 @@ export function ReadingContent({ content, slug, chapterId }: Props) {
         small: "text-sm leading-relaxed",
         medium: "text-base leading-relaxed",
         large: "text-lg leading-relaxed",
-        xlarge: "text-xl leading-relaxed"
+        xlarge: "text-xl leading-relaxed",
+        xxlarge: "text-2xl leading-relaxed",
+        xxxlarge: "text-3xl leading-relaxed"
     }
 
     const handleFontSizeChange = (
-        size: "small" | "medium" | "large" | "xlarge"
+        size: "small" | "medium" | "large" | "xlarge" | "xxlarge" | "xxxlarge"
     ) => {
         setFontSize(size)
-    } // Handler for content updates from ChapterUpdateNotifier
+    }
+
     const handleContentUpdate = (updatedContent: string) => {
         setCurrentContent(updatedContent)
     }
@@ -61,16 +64,25 @@ export function ReadingContent({ content, slug, chapterId }: Props) {
             )}
 
             <div className="bg-card rounded-lg p-6 shadow-sm border">
-                <div
-                    className={`prose prose-sm dark:prose-invert max-w-none ${fontSizeClasses[fontSize]}`}
-                >
-                    {" "}
+                <div className={`max-w-none`}>
                     {currentContent ? (
                         currentContent
                             .split("\n")
-                            .map((paragraph: string, index: number) => (
-                                <p key={index}>{paragraph}</p>
-                            ))
+                            .map((paragraph: string, index: number) => {
+                                if (paragraph.trim() == "") {
+                                    return <p key={index} className={fontSizeClasses[fontSize]}>&nbsp;</p>;
+                                }
+                                else {
+                                    return (
+                                        <p
+                                            key={index}
+                                            className={fontSizeClasses[fontSize]}
+                                        >
+                                            {paragraph}
+                                        </p>
+                                    )
+                                }
+                            })
                     ) : (
                         <p className="text-center text-muted-foreground">
                             Nội dung chương đang được cập nhật...

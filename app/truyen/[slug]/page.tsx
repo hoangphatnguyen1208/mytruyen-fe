@@ -40,9 +40,6 @@ interface Props {
 export default async function StoryPage({ params }: Props) {
     const slug = (await params).slug
     const story = await serverApi.story.getBySlug(slug)
-    const chapters_detail = story
-        ? await serverApi.story.getChapters(story.id)
-        : []
     if (!story) {
         return <NotFound message="Truyện không tồn tại" />
     }

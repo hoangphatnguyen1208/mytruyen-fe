@@ -1,5 +1,6 @@
 import { Story, ChapterDetail, Comment } from "@/types/api"
 import { retry } from "./retry"
+import { METHODS } from "http"
 
 const API_BASE_URL = "https://backend.metruyencv.com/api"
 
@@ -15,7 +16,7 @@ export const serverApi = {
         getBySlug: async (slug: string): Promise<Story | null> => {
             try {
                 const res = await fetch(
-                    `${API_BASE_URL}/books/search?keyword=${slug}&page=1`,
+                    `${API_BASE_URL}/books/search?keyword=${slug}&page=1&limit=5`,
                     {
                         headers: {
                             "Content-Type": "application/json",
@@ -135,16 +136,21 @@ export const serverApi = {
         ): Promise<string> => {
             try {
                 const res = await fetch(
-                    `https://metruyencv.com/truyen/${slug}/chuong-${chapterId}`,
+                    "https://metruyen-crawler.onrender.com/get_chapter?url=" +
+                        encodeURIComponent(
+                            `https://metruyencv.com/truyen/${slug}/chuong-${chapterId}`
+                        ),
                     {
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`
+                            Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`,
+                            "cache-control": "default"
                         },
-                        next: { revalidate: 600 } // Revalidate every 10 minutes
+                        next: { revalidate: 60 * 60 * 24 * 30 }
                     }
                 )
-                return await res.text()
+                const content = await res.json()
+                return content.content
             } catch (error) {
                 console.error("Error fetching chapter:", error)
                 return ""

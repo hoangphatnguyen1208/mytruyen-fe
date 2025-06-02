@@ -31,7 +31,6 @@ export async function GET(request: NextRequest) {
             status: 200,
             headers: {
                 "Content-Type": "application/json",
-                "Cache-Control": "s-maxage=300" // Cache for 5 minutes on the edge
             }
         })
     } catch (error) {
