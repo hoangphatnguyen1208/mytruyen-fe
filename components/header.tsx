@@ -3,6 +3,7 @@
 import type React from "react"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Search, Book, User, Tag, TrendingUp } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -38,7 +39,9 @@ export function Header() {
             setIsLoading(true)
             try {
                 const response = await fetch(
-                    `/api/search?keyword=${encodeURIComponent(searchQuery)}&limit=5`
+                    `/api/search?keyword=${encodeURIComponent(
+                        searchQuery
+                    )}&limit=5`
                 )
                 const data = await response.json()
                 setSuggestions(data.data)
@@ -91,14 +94,28 @@ export function Header() {
 
     return (
         <header className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4 py-3 border-b">
+            {" "}
             {/* Logo section */}
             <div className="md:w-1/4">
-                <Link href="/">
-                    <h1 className="text-3xl font-bold">My Truyện</h1>
-                    <p className="text-muted-foreground">{t("site.tagline")}</p>
+                {" "}
+                <Link href="/" className="flex items-center space-x-3">
+                    <Image
+                        src="/favicon.ico"
+                        alt="My Truyện Logo"
+                        width={40}
+                        height={40}
+                        className="h-10 w-10"
+                    />
+                    <div>
+                        <h1 className="text-2xl font-bold text-primary">
+                            My Truyện
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            {t("site.tagline")}
+                        </p>
+                    </div>
                 </Link>
             </div>
-
             {/* Search section - centered */}
             <div className="w-full md:w-2/4 flex justify-center">
                 <div ref={searchRef} className="relative w-full max-w-md">
@@ -163,7 +180,6 @@ export function Header() {
                     )}
                 </div>
             </div>
-
             {/* User controls section */}
             <div className="flex justify-end md:w-1/4 gap-2 items-center">
                 <LanguageSwitcher />

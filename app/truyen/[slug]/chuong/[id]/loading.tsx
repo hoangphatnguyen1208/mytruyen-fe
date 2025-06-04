@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ChapterLoading() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="max-w-6xl mx-auto px-4 py-6">
       <header className="flex justify-between items-center mb-6">
         <div>
           <Skeleton className="h-6 w-48 mb-2" />

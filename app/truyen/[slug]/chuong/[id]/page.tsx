@@ -48,13 +48,6 @@ export default async function ChapterPage({ params }: Props) {
         return <NotFound message="Chương không tồn tại" />
     }
 
-    const fontSizeClasses = {
-        small: "text-sm",
-        medium: "text-base",
-        large: "text-lg",
-        xlarge: "text-xl"
-    }
-
     // Get previous and next chapter IDs for navigation
     const prevChapterId = navigation.prev?.index || null
     const nextChapterId = navigation.next?.index || null

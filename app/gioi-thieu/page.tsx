@@ -1,70 +1,98 @@
 export default function AboutPage() {
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Giới thiệu về My Truyện</h1>
+    return (
+        <div className="container mx-auto px-4 py-6">
+            <div className="max-w-3xl mx-auto">
+                <h1 className="text-3xl font-bold mb-6">
+                    Giới thiệu về My Truyện
+                </h1>
 
-        <div className="prose dark:prose-invert max-w-none">
-          <p>
-            My Truyện là một nền tảng đọc truyện chữ trực tuyến hàng đầu tại Việt Nam, cung cấp kho tàng truyện đa dạng
-            và phong phú từ nhiều thể loại khác nhau như Tiên Hiệp, Kiếm Hiệp, Ngôn Tình, Đô Thị, và nhiều thể loại
-            khác.
-          </p>
-
-          <h2>Sứ mệnh của chúng tôi</h2>
-          <p>
-            Sứ mệnh của My Truyện là mang đến cho độc giả những tác phẩm văn học chất lượng cao, đồng thời tạo ra một
-            cộng đồng nơi những người yêu thích đọc truyện có thể kết nối, chia sẻ và thảo luận về những tác phẩm họ yêu
-            thích.
-          </p>
-
-          <h2>Tầm nhìn</h2>
-          <p>
-            Chúng tôi hướng đến việc trở thành nền tảng đọc truyện chữ trực tuyến số một tại Việt Nam, nơi độc giả có
-            thể tìm thấy bất kỳ tác phẩm nào họ mong muốn, với trải nghiệm đọc tốt nhất trên mọi thiết bị.
-          </p>
-
-          <h2>Giá trị cốt lõi</h2>
-          <ul>
-            <li>
-              <strong>Chất lượng:</strong> Chúng tôi cam kết cung cấp những tác phẩm chất lượng cao, được biên tập cẩn
-              thận.
-            </li>
-            <li>
-              <strong>Đa dạng:</strong> Chúng tôi cung cấp nhiều thể loại truyện khác nhau để đáp ứng sở thích đa dạng
-              của độc giả.
-            </li>
-            <li>
-              <strong>Cộng đồng:</strong> Chúng tôi xây dựng một cộng đồng thân thiện, nơi độc giả có thể chia sẻ và
-              thảo luận về truyện.
-            </li>
-            <li>
-              <strong>Đổi mới:</strong> Chúng tôi liên tục cải tiến nền tảng để mang đến trải nghiệm đọc tốt nhất cho
-              người dùng.
-            </li>
-          </ul>
-
-          <h2>Lịch sử phát triển</h2>
-          <p>
-            My Truyện được thành lập vào năm 2020 với mục tiêu ban đầu là tạo ra một nền tảng đọc truyện chữ trực tuyến
-            chất lượng cao cho người Việt. Từ đó đến nay, chúng tôi đã không ngừng phát triển và mở rộng, với hàng triệu
-            độc giả trung thành và hàng nghìn tác phẩm đa dạng.
-          </p>
-
-          <h2>Đội ngũ của chúng tôi</h2>
-          <p>
-            Đội ngũ My Truyện bao gồm những người đam mê văn học và công nghệ, cùng nhau làm việc để mang đến trải
-            nghiệm đọc truyện tốt nhất cho người dùng. Chúng tôi có đội ngũ biên tập viên chuyên nghiệp, những người làm
-            việc không mệt mỏi để đảm bảo chất lượng của mỗi tác phẩm trên nền tảng của chúng tôi.
-          </p>
-
-          <h2>Liên hệ với chúng tôi</h2>
-          <p>
-            Nếu bạn có bất kỳ câu hỏi, góp ý hoặc đề xuất nào, vui lòng liên hệ với chúng tôi qua email:{" "}
-            <a href="mailto:contact@mytruyen.com">contact@mytruyen.com</a>
-          </p>
+                <div className="prose dark:prose-invert max-w-none">
+                    <p>
+                        My Truyện là một nền tảng đọc truyện chữ trực tuyến,
+                        cung cấp kho tàng truyện đa dạng và phong phú từ nhiều
+                        thể loại khác nhau như Tiên Hiệp, Kiếm Hiệp, Ngôn Tình,
+                        Đô Thị, và nhiều thể loại khác.{" "}
+                        <strong>
+                            Tất cả nội dung trên website chỉ mang tính chất giải
+                            trí và không phù hợp với mọi độ tuổi.
+                        </strong>
+                    </p>
+                    <h2>Về nền tảng</h2>
+                    <p>
+                        My Truyện hoạt động như một nền tảng chia sẻ nội dung do
+                        người dùng tạo ra và cung cấp.
+                        <strong>
+                            Chúng tôi không tạo ra, kiểm duyệt hoặc chịu trách
+                            nhiệm về nội dung được đăng tải.
+                        </strong>
+                        Mọi nội dung đều do người dùng đóng góp và chia sẻ.
+                    </p>
+                    <h2>Tuyên bố miễn trách nhiệm</h2>
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                        <h3 className="font-semibold text-yellow-800 dark:text-yellow-200">
+                            Quan trọng:
+                        </h3>
+                        <ul className="text-yellow-700 dark:text-yellow-300 mt-2">
+                            <li>
+                                • Nội dung trên website chỉ mang tính chất giải
+                                trí
+                            </li>
+                            <li>
+                                • Chúng tôi không chịu trách nhiệm về độ chính
+                                xác, tính pháp lý của nội dung
+                            </li>
+                            <li>
+                                • Người dùng có trách nhiệm tuân thủ pháp luật
+                                khi sử dụng dịch vụ
+                            </li>
+                            <li>
+                                • Mọi tranh chấp liên quan đến nội dung là trách
+                                nhiệm của tác giả/người đăng
+                            </li>
+                        </ul>
+                    </div>
+                    <h2>Giá trị cốt lõi</h2>
+                    <ul>
+                        <li>
+                            <strong>Cộng đồng:</strong> Xây dựng một nền tảng để
+                            cộng đồng yêu thích văn học chia sẻ và thảo luận.
+                        </li>
+                        <li>
+                            <strong>Đa dạng:</strong> Hỗ trợ nhiều thể loại
+                            truyện khác nhau để phục vụ sở thích đa dạng của độc
+                            giả.
+                        </li>
+                        <li>
+                            <strong>Minh bạch:</strong> Rõ ràng về vai trò và
+                            trách nhiệm của nền tảng.
+                        </li>
+                        <li>
+                            <strong>Tự do sáng tạo:</strong> Tôn trọng quyền tự
+                            do sáng tạo trong giới hạn pháp luật cho phép.
+                        </li>
+                    </ul>
+                    <h2>Lưu ý quan trọng</h2>{" "}
+                    <p>
+                        Website này được vận hành tại Việt Nam và tuân thủ pháp
+                        luật Việt Nam.
+                        <strong>
+                            Người dùng có trách nhiệm đảm bảo việc truy cập và
+                            sử dụng website không vi phạm pháp luật tại quốc gia
+                            của họ.
+                        </strong>
+                        Chúng tôi khuyến khích người dùng chỉ đọc những nội dung
+                        phù hợp với độ tuổi và giá trị của mình.
+                    </p>
+                    <h2>Liên hệ với chúng tôi</h2>
+                    <p>
+                        Nếu bạn có bất kỳ câu hỏi, góp ý hoặc đề xuất nào, vui
+                        lòng liên hệ với chúng tôi qua email:{" "}
+                        <a href="mailto:contact@mytruyen.com">
+                            contact@mytruyen.com
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  )
+    )
 }
