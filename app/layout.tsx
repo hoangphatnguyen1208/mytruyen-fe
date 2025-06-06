@@ -34,7 +34,11 @@ export const metadata: Metadata = {
     openGraph: {
         title: "My Truyện - Nền tảng chia sẻ truyện chữ",
         description:
-            "Nền tảng chia sẻ truyện chữ do người dùng đóng góp. Nội dung chỉ mang tính giải trí."
+            "Nền tảng chia sẻ truyện chữ do người dùng đóng góp. Nội dung chỉ mang tính giải trí.",
+        siteName: "My Truyện",
+        type: "website",
+        // images: ["/og-image.png"],
+        url: "https://mytruyen.vercel.app"
     }
 }
 
