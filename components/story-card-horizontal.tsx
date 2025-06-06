@@ -1,50 +1,67 @@
-import { Clock } from "lucide-react"
-import Link from "next/link"
-import { Story } from "@/types/api"
-import { formatDistanceToNow } from "date-fns"
-import { vi } from "date-fns/locale"
+import { BookOpen, Eye, Star, PenLine, Radio } from 'lucide-react'
+import Link from 'next/link'
+import { Story } from '@/types/api'
+import Image from 'next/image'
 
 export function StoryCardHorizontal({ story }: { story: Story }) {
-    return (
-        <div className="flex flex-wrap gap-4 mb-2">
-            <Link
-                key={story.id}
-                href={`/truyen/${story.slug}`}
-                className="w-[235px] group flex flex-col overflow-hidden rounded-lg border bg-card hover:shadow-md transition-all"
-            >
-                <div className="relative w-full overflow-hidden">
-                    <img
-                        src={story.poster[300] || "/placeholder.svg"}
-                        alt={story.name}
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/100 to-transparent p-2">
-                        <div className="flex items-center text-xs text-white">
-                            <Clock className="h-3 w-3 mr-1" />
-                            <span>
-                                {formatDistanceToNow(
-                                    new Date(story.new_chap_at),
-                                    {
-                                        addSuffix: true,
-                                        locale: vi,
-                                    }
-                                )}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div className="p-3 flex-1 flex flex-col">
-                    <h3 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                        {story.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                        {story.author?.name}
-                    </p>
-                    <div className="text-xs text-muted-foreground mt-auto pt-2">
-                        Chương {story.chapter_count}
-                    </div>
-                </div>
-            </Link>
+  return (
+    <div className="flex items-stretch overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-md">
+      <Link href={`/truyen/${story.slug}`} className="group flex">
+        <div className="relative w-32 overflow-hidden">
+          <Image
+            src={story.poster[300] || '/placeholder.svg'}
+            alt={story.name}
+            className="object-cover transition-transform group-hover:scale-105"
+            fill
+          />
         </div>
-    )
+        <div className="flex flex-1 flex-col px-2 pb-1 pt-2">
+          <div className="underline-none flex flex-none items-start justify-between py-1">
+            <div>
+              <div className="line-clamp-2 text-lg font-semibold group-hover:text-primary">
+                {story.name}
+              </div>
+              <p className="line-clamp-1 text-sm text-muted-foreground">
+                {story.author?.name}
+              </p>
+            </div>
+            <div className="flex items-center py-1 text-amber-500">
+              <Star className="h-4 w-4 fill-current" />
+              <span className="ml-1 text-sm">
+                {Number(story.review_score).toFixed(1)}
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-1 items-center">
+            <p className="line-clamp-3 text-sm">{story.synopsis}</p>
+          </div>
+
+          <div className="flex flex-none gap-4 py-1 text-xs text-muted-foreground">
+            <div className="flex items-center">
+              <BookOpen className="mr-1 h-3 w-3" />
+              {story.chapter_count} chương
+            </div>
+            <div className="flex items-center">
+              <PenLine className="mr-1 h-3 w-3" />
+              {story.status_name}
+            </div>
+            {story.reading_count > 0 ? (
+              <div className="flex items-center">
+                <Radio className="mr-1 h-3 w-3" />
+                {story.reading_count}
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <Eye className="mr-1 h-3 w-3" />
+                {story.view_count}
+              </div>
+            )}
+            <button className="item-center ml-auto mt-1 h-auto rounded-md text-amber-700 outline outline-1 outline-amber-700">
+              <p className="p-1">{story.genres ? story.genres[0].name : ''}</p>
+            </button>
+          </div>
+        </div>
+      </Link>
+    </div>
+  )
 }

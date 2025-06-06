@@ -1,23 +1,23 @@
-import Link from "next/link"
-import { ArrowLeft, ArrowRight, BookOpen } from "lucide-react"
+import Link from 'next/link'
+import { ArrowLeft, ArrowRight, BookOpen } from 'lucide-react'
 
-import { Button } from "@/components/ui/button"
-import type { Metadata } from "next"
-import { serverApi } from "@/lib/server-api"
-import { NotFound } from "@/components/not-found"
-import { BackToTop } from "@/components/back-to-top"
-import { ReadingContent } from "@/components/reading-content"
-import { ReadingTracker } from "@/components/reading-tracker"
+import { Button } from '@/components/ui/button'
+import type { Metadata } from 'next'
+import { serverApi } from '@/lib/server-api'
+import { NotFound } from '@/components/not-found'
+import { BackToTop } from '@/components/back-to-top'
+import { ReadingContent } from '@/components/reading-content'
+import { ReadingTracker } from '@/components/reading-tracker'
 
 export async function generateMetadata({
-    params
+    params,
 }: {
     params: { slug: string; id: string }
 }): Promise<Metadata> {
     const { slug, id } = await params
     const story = await serverApi.story.getBySlug(slug)
     return {
-        title: story?.name ? `${story.name} - Chương ${id}` : `Chương ${id}`
+        title: story?.name ? `${story.name} - Chương ${id}` : `Chương ${id}`,
     }
 }
 
@@ -53,13 +53,13 @@ export default async function ChapterPage({ params }: Props) {
     const nextChapterId = navigation.next?.index || null
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-6">
-            {" "}
-            <header className="flex justify-between items-center mb-6">
+        <div className="mx-auto max-w-6xl px-4 py-6">
+            {' '}
+            <header className="mb-6 flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{story.name}</h1>
                     <p className="text-muted-foreground">
-                        Chương {chapterId}: {chapterDetail?.name || ""}
+                        Chương {chapterId}: {chapterDetail?.name || ''}
                     </p>
                 </div>
                 <Link
@@ -70,17 +70,8 @@ export default async function ChapterPage({ params }: Props) {
                     <span className="text-sm">Thông tin truyện</span>
                 </Link>
             </header>
-            {/* Reading progress bar */}
-            <div className="w-full h-1 bg-muted mb-6">
-                <div
-                    className="h-full bg-primary"
-                    style={{
-                        width: `${(chapterId / story.chapter_count) * 100}%`
-                    }}
-                ></div>
-            </div>
             {/* Chapter navigation */}
-            <div className="flex justify-between mb-6">
+            <div className="mb-6 flex justify-between">
                 {prevChapterId ? (
                     <Button variant="outline" asChild>
                         <Link
@@ -114,7 +105,7 @@ export default async function ChapterPage({ params }: Props) {
                         <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                 )}
-            </div>{" "}
+            </div>{' '}
             {/* Invisible component to track reading progress */}
             <ReadingTracker
                 story={story}
@@ -128,7 +119,7 @@ export default async function ChapterPage({ params }: Props) {
                 chapterId={chapterId}
             />
             {/* Bottom chapter navigation */}
-            <div className="flex justify-between mb-6">
+            <div className="mb-6 flex justify-between">
                 {prevChapterId ? (
                     <Button variant="outline" asChild>
                         <Link
@@ -162,7 +153,7 @@ export default async function ChapterPage({ params }: Props) {
                         <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                 )}
-            </div>{" "}
+            </div>{' '}
             {/* Return to story link */}
             <div className="text-center">
                 <Button variant="link" asChild>
