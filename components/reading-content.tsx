@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { ReadingControls } from "./reading-controls"
-import { ChapterUpdateNotifier } from "./chapter-update-notifier"
 import { getReadingPrefs } from "@/lib/reading-preferences"
 
 interface Props {
@@ -52,16 +51,6 @@ export function ReadingContent({ content, slug, chapterId }: Props) {
             <div className="flex justify-end mb-2">
                 <ReadingControls onFontSizeChange={handleFontSizeChange} />
             </div>
-
-            {slug && chapterId && (
-                <div className="mb-4">
-                    <ChapterUpdateNotifier
-                        slug={slug}
-                        chapterId={chapterId}
-                        onUpdateAvailable={handleContentUpdate}
-                    />
-                </div>
-            )}
 
             <div className="bg-card rounded-lg p-6 shadow-sm border">
                 <div className={`max-w-none`}>

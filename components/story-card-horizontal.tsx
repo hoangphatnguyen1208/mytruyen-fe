@@ -9,8 +9,8 @@ export function StoryCardHorizontal({ story }: { story: Story }) {
       <Link href={`/truyen/${story.slug}`} className="group flex">
         <div className="relative w-32 overflow-hidden">
           <Image
-            src={story.poster[300] || '/placeholder.svg'}
-            alt={story.name}
+            src={story.poster?.[300] || '/placeholder.svg'}
+            alt={story.name || 'Poster'}
             className="object-cover transition-transform group-hover:scale-105"
             fill
           />
@@ -45,7 +45,7 @@ export function StoryCardHorizontal({ story }: { story: Story }) {
               <PenLine className="mr-1 h-3 w-3" />
               {story.status_name}
             </div>
-            {story.reading_count > 0 ? (
+            {story.reading_count && story.reading_count > 0 ? (
               <div className="flex items-center">
                 <Radio className="mr-1 h-3 w-3" />
                 {story.reading_count}

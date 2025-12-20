@@ -18,7 +18,7 @@ export interface Author {
     id: number
     name: string
     avatar: string[]
-    object_type: string
+    object_type?: string
 }
 
 export interface Genre {
@@ -28,51 +28,52 @@ export interface Genre {
 }
 
 export interface Story {
-    id: number
+    id: number | string
     name: string
     slug: string
     kind: number
     sex: number
-    state: string
-    status: number
-    link: string
-    note: string
-    status_name: string
-    first_chapter: number
-    latest_chapter: number
-    latest_index: number
-    high_quality: number
-    manager_pick: number
+    state?: string
+    status?: number
+    status_id?: number
+    link?: string
+    note?: string
+    status_name?: string
+    first_chapter?: number
+    latest_chapter?: number
+    latest_index?: number
+    high_quality?: number
+    manager_pick?: number
     poster: Poster
     synopsis: string
-    vote_count: number
-    review_score: string
-    review_count: number
+    vote_count?: number
+    review_score?: string
+    review_count?: number
     comment_count: number
     chapter_count: number
     view_count: number
     word_count: number
+    new_chap_at: string
     created_at: string
     updated_at: string
-    new_chap_at: string
-    published_at: string
-    published: number
-    user_id: number
-    object_type: string
-    bookmark_count: number
+    published_at?: string
+    published?: number
+    user_id?: number
+    object_type?: string
+    bookmark_count?: number
     chapter_per_week: number
-    ready_for_sale: number
-    discount_price: number
-    discount: number
-    creator: Creator
+    ready_for_sale?: number
+    discount_price?: number
+    discount?: number
+    creator?: Creator
     author: Author
-    genres: Genre[]
-    reading_count: number
+    genres?: Genre[]
+    reading_count?: number
 }
 
 export interface HotStory {
-    book: Story
-    reading_count: number
+    book?: Story
+    reading_count?: number
 }
 
 export interface ChapterDetail {
