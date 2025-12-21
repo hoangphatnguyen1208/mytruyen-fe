@@ -3,7 +3,7 @@ import { apiCache } from './cache'
 
 // This is a server component API, so we can directly call the backend API
 // const API_BASE_URL = "https://backend.metruyencv.com/api"
-const API_BASE_URL = 'http://localhost:8000/api/v1'
+const API_BASE_URL = process.env.MYTTRUYEN_API_BASE_URL || 'http://localhost:8000/api/v1'
 
 export const homeApi = {
   /**

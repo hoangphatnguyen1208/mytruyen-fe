@@ -3,8 +3,10 @@ import { retry } from './retry'
 import { METHODS } from 'http'
 
 // const API_BASE_URL = "https://backend.metruyencv.com/api"
-const API_BASE_URL = 'http://localhost:8000/api/v1'
-const API_BASE_URL_V2 = 'http://localhost:8000/api/v2'
+const API_BASE_URL =
+  process.env.MYTTRUYEN_API_BASE_URL || 'http://localhost:8000/api/v1'
+const API_BASE_URL_V2 =
+  process.env.MYTTRUYEN_API_BASE_URL_V2 || 'http://localhost:8000/api/v2'
 
 /**
  * Server-side API client for direct backend access
@@ -43,8 +45,8 @@ export const serverApi = {
     getChapters: async (storyId: number | string): Promise<ChapterDetail[]> => {
       try {
         const res = await fetch(
-        //   `${API_BASE_URL}/chapters?filter%5Bbook_id%5D=${storyId}&filter%5Btype%5D=published`,
-            `${API_BASE_URL_V2}/chapters/${storyId}`,
+          //   `${API_BASE_URL}/chapters?filter%5Bbook_id%5D=${storyId}&filter%5Btype%5D=published`,
+          `${API_BASE_URL_V2}/chapters/${storyId}`,
           {
             headers: {
               'Content-Type': 'application/json',
