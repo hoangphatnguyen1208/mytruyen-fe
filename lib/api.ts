@@ -1,9 +1,17 @@
-import { Story, ChapterDetail, Comment } from '@/types/api'
+import {
+  Story,
+  ChapterDetail,
+  Comment,
+  SearchResponse,
+  SearchResult,
+} from '@/types/api'
 import { apiCache } from './cache'
 import { applyMiddleware, withLogging } from './middleware'
 import { retry } from './retry'
 
 // const API_BASE_URL = "https://backend.metruyencv.com/api"
+const API_BASE_URL_V1 =
+  process.env.MYTTRUYEN_API_BASE_URL_V1 || 'http://localhost:8000/api/v1'
 const API_BASE_URL_V2 =
   process.env.MYTTRUYEN_API_BASE_URL_V2 || 'http://localhost:8000/api/v2'
 
@@ -39,6 +47,46 @@ export const api = {
         return story
       } catch (error) {
         console.error('Error fetching story:', error)
+        return null
+      }
+    },
+
+    /**
+     * Get a story by its ID
+     */
+    getById: async (bookId: string): Promise<Story | null> => {
+      try {
+        const cacheKey = `book_${bookId}`
+
+        // Check cache first
+        const cachedBook = apiCache.get<Story>(cacheKey)
+        if (cachedBook) {
+          return cachedBook
+        }
+
+        const res = await fetch(`${API_BASE_URL_V2}/books/${bookId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`,
+          },
+          next: { revalidate: 300 },
+        })
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch book')
+        }
+
+        const data = await res.json()
+        const book = data.data || null
+
+        // Cache the response for 10 minutes
+        if (book) {
+          apiCache.set(cacheKey, book, 10 * 60 * 1000)
+        }
+
+        return book
+      } catch (error) {
+        console.error('Error fetching book:', error)
         return null
       }
     },
@@ -383,7 +431,40 @@ export const api = {
 
   search: {
     /**
-     * Search stories by keyword
+     * Search content by query text using vector search
+     */
+    content: async (queryText: string): Promise<SearchResult[]> => {
+      try {
+        const cacheKey = `search_content_${queryText}`
+
+        // For search queries, use a shorter cache time
+        const cachedResults = apiCache.get<SearchResult[]>(cacheKey)
+        if (cachedResults) {
+          return cachedResults
+        }
+
+        const url = `${API_BASE_URL_V1}/search?query_text=${encodeURIComponent(queryText)}`
+        const res = await fetch(url)
+        const data: SearchResponse = await res.json()
+
+        if (!data.success) {
+          throw new Error(data.message || 'Search failed')
+        }
+
+        const results = data.data || []
+
+        // Cache search results for 3 minutes
+        apiCache.set(cacheKey, results, 3 * 60 * 1000)
+
+        return results
+      } catch (error) {
+        console.error('Error searching content:', error)
+        return []
+      }
+    },
+
+    /**
+     * Search stories by keyword (legacy method)
      */
     stories: async (keyword: string, page = 1): Promise<Story[]> => {
       try {
