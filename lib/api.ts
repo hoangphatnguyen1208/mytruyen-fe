@@ -11,9 +11,10 @@ import { retry } from './retry'
 
 // const API_BASE_URL = "https://backend.metruyencv.com/api"
 const API_BASE_URL_V1 =
-  process.env.MYTRUYEN_API_BASE_URL || 'http://localhost:8000/api/v1'
+  process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL ||
+  'http://localhost:8000/api/v1'
 const API_BASE_URL_V2 =
-  process.env.MYTRUYEN_API_BASE_URL_V2 || 'http://localhost:8000/api/v2'
+  process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL_V2 || 'http://localhost:8000/api/v2'
 
 // Create a fetch function with middleware applied
 const fetchWithMiddleware = applyMiddleware([withLogging])
