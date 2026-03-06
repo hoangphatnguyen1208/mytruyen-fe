@@ -47,8 +47,10 @@ export function Header() {
 
       setIsLoading(true)
       try {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL || "http://localhost:3000/api/v1"
+        
         const response = await fetch(
-          `/api/search?keyword=${encodeURIComponent(searchQuery)}&limit=5`,
+          `${API_BASE_URL}/search?query_text=${encodeURIComponent(searchQuery)}&limit=5`,
         )
         const data = await response.json()
         setSuggestions(data.data)

@@ -7,8 +7,8 @@
  * Middleware that adds authorization headers to requests
  */
 export const withAuth = async (url: string, options: RequestInit = {}) => {
-    // Get auth token from storage or context
-    const token = localStorage.getItem("auth_token")
+    // Get JWT token from localStorage
+    const token = typeof window !== 'undefined' ? localStorage.getItem("auth_token") : null
 
     // Add Authorization header if token exists
     if (token) {

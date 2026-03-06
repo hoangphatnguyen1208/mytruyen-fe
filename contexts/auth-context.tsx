@@ -1,14 +1,27 @@
-// Cập nhật AuthContext để sử dụng API routes
+// Auth Context với JWT authentication
 
-"use client"
+'use client'
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from 'react'
+import {
+  decodeJWT,
+  getUserFromToken,
+  setToken,
+  removeToken,
+  getToken,
+  isTokenExpired,
+} from '@/lib/jwt'
 
 type User = {
   id: string
   name: string
   email: string
-  role: "user" | "admin"
 }
 
 type AuthContextType = {
@@ -17,10 +30,14 @@ type AuthContextType = {
   signup: (name: string, email: string, password: string) => Promise<boolean>
   logout: () => Promise<void>
   isLoading: boolean
-  isAdmin: () => boolean
+  getToken: () => string | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL ||
+  'http://localhost:8000/api/v1'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -30,25 +47,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Kiểm tra từ localStorage trước
-        const storedUser = localStorage.getItem("user")
-        if (storedUser) {
-          setUser(JSON.parse(storedUser))
-          setIsLoading(false)
-          return
-        }
-
-        // Nếu không có trong localStorage, kiểm tra session từ API
-        const response = await fetch("/api/auth/session")
-        if (response.ok) {
-          const data = await response.json()
-          if (data.user) {
-            setUser(data.user)
-            localStorage.setItem("user", JSON.stringify(data.user))
+        // Kiểm tra JWT token trong localStorage
+        const token = getToken()
+        if (token && !isTokenExpired(token)) {
+          // Decode JWT để lấy thông tin user
+          const userData = getUserFromToken(token)
+          if (userData) {
+            setUser(userData as User)
+          } else {
+            removeToken()
           }
+        } else if (token) {
+          // Token hết hạn
+          removeToken()
         }
       } catch (error) {
-        console.error("Auth check error:", error)
+        console.error('Auth check error:', error)
+        removeToken()
       } finally {
         setIsLoading(false)
       }
@@ -61,27 +76,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       })
 
       const data = await response.json()
 
-      if (data.success && data.user) {
-        setUser(data.user)
-        localStorage.setItem("user", JSON.stringify(data.user))
-        setIsLoading(false)
-        return true
-      }
+      // Backend trả về token trong data.token hoặc data.access_token
+      if (response.ok && (data.token || data.access_token)) {
+        const token = data.token || data.access_token
 
+        // Lưu token vào localStorage
+        localStorage.setItem('auth_token', token)
+
+        // Decode JWT để lấy thông tin user
+        setToken(token)
+
+        // Decode JWT để lấy thông tin user
+        const userData = getUserFromToken(token)
+        if (userData) {
+          setUser({
+            ...userData,
+            name: userData.name || data.user?.name,
+            email: userData.email || data.user?.email,
+          })
+          setIsLoading(false)
+          return true
+        }
+      }
       setIsLoading(false)
       return false
     } catch (error) {
-      console.error("Login error:", error)
+      console.error('Login error:', error)
       setIsLoading(false)
       return false
     }
@@ -91,37 +121,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (name: string, email: string, password: string) => {
     setIsLoading(true)
     try {
-      // Trong thực tế, gọi API đăng ký
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name, email, password }),
       })
 
       const data = await response.json()
 
-      if (data.success && data.user) {
-        setUser(data.user)
-        localStorage.setItem("user", JSON.stringify(data.user))
-        setIsLoading(false)
-        return true
-      }
+      // Backend trả về token sau khi đăng ký thành công
+      if (response.ok && (data.token || data.access_token)) {
+        const token = data.token || data.access_token
 
-      // Mô phỏng đăng ký thành công
-      const userData = {
-        id: Math.random().toString(36).substr(2, 9),
-        name,
-        email,
-        role: "user",
+        // Lưu token vào localStorage
+        localStorage.setItem('auth_token', token)
+
+        // Decode JWT để lấy thông tin user
+        setToken(token)
+
+        // Decode JWT để lấy thông tin user
+        const userData = getUserFromToken(token)
+        if (userData) {
+          setUser({
+            ...userData,
+            name: userData.name || name,
+            email: userData.email || email,
+          })
+          setIsLoading(false)
+          return true
+        }
       }
-      setUser(userData)
-      localStorage.setItem("user", JSON.stringify(userData))
       setIsLoading(false)
-      return true
+      return false
     } catch (error) {
-      console.error("Signup error:", error)
+      console.error('Signup error:', error)
       setIsLoading(false)
       return false
     }
@@ -130,33 +165,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Hàm đăng xuất
   const logout = async () => {
     try {
-      // Gọi API đăng xuất để xóa cookie
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      })
-
-      // Xóa dữ liệu người dùng khỏi state và localStorage
+      // Xóa token và dữ liệu người dùng
       setUser(null)
-      localStorage.removeItem("user")
+      removeToken()
+
+      // Có thể gọi API logout nếu backend yêu cầu (để blacklist token)
+      // const token = getToken()
+      // if (token) {
+      //   await fetch(`${API_BASE_URL}/auth/logout`, {
+      //     method: "POST",
+      //     headers: { "Authorization": `Bearer ${token}` }
+      //   })
+      // }
     } catch (error) {
-      console.error("Logout error:", error)
+      console.error('Logout error:', error)
     }
   }
 
-  // Hàm kiểm tra quyền admin
-  const isAdmin = () => {
-    return user !== null && user.role === "admin"
+  // Hàm lấy JWT token
+  const AuthToken = () => {
+    return getToken()
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isLoading, isAdmin }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{ user, login, signup, logout, isLoading, getToken: AuthToken }}
+    >
+      {children}
+    </AuthContext.Provider>
   )
 }
 
 export function useAuth() {
   const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
 }

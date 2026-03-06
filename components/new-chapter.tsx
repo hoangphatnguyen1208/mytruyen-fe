@@ -54,7 +54,7 @@ export function NewChapter() {
                 >
                     <div className="flex items-center col-span-1">
                         <span className="text-sm text-muted-foreground truncate">
-                            {story.genres[0].name}
+                            {story.genres?.[0]?.name}
                         </span>
                     </div>
                     <div className="flex items-center col-span-6">

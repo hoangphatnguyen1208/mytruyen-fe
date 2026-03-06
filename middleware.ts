@@ -1,29 +1,55 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+/**
+ * Decode JWT token (basic decode without verification)
+ */
+function decodeJWT(token: string) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload
+  } catch {
+    return null
+  }
+}
 
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   // Kiểm tra nếu đường dẫn bắt đầu bằng /admin
-  if (path.startsWith("/admin")) {
-    // Lấy thông tin người dùng từ cookie
-    const userCookie = request.cookies.get("user")?.value
+  if (path.startsWith('/admin')) {
+    // Lấy JWT token từ localStorage (phía client) hoặc từ cookie
+    // Vì middleware chạy ở edge/server, cần check token từ cookie hoặc header
+    const authHeader = request.headers.get('authorization')
+    const tokenFromCookie = request.cookies.get('auth_token')?.value
 
-    // Nếu không có cookie người dùng, chuyển hướng đến trang đăng nhập
-    if (!userCookie) {
-      return NextResponse.redirect(new URL("/login", request.url))
+    const token = authHeader?.replace('Bearer ', '') || tokenFromCookie
+
+    // Nếu không có token, chuyển hướng đến trang đăng nhập
+    if (!token) {
+      return NextResponse.redirect(new URL('/dang-nhap', request.url))
     }
 
     try {
-      const userData = JSON.parse(userCookie)
+      const payload = decodeJWT(token)
+
+      // Kiểm tra token có hợp lệ không
+      if (!payload) {
+        return NextResponse.redirect(new URL('/dang-nhap', request.url))
+      }
+
+      // Kiểm tra token có hết hạn không
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        return NextResponse.redirect(new URL('/dang-nhap', request.url))
+      }
+
       // Kiểm tra quyền admin
-      if (!userData || userData.role !== "admin") {
-        // Nếu không phải admin, chuyển hướng đến trang chủ
-        return NextResponse.redirect(new URL("/unauthorized", request.url))
+      if (payload.role !== 'admin') {
+        return NextResponse.redirect(new URL('/unauthorized', request.url))
       }
     } catch (error) {
-      // Nếu có lỗi khi parse JSON, chuyển hướng đến trang đăng nhập
-      return NextResponse.redirect(new URL("/login", request.url))
+      console.error('JWT verification error:', error)
+      return NextResponse.redirect(new URL('/dang-nhap', request.url))
     }
   }
 
@@ -31,5 +57,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ['/admin/:path*'],
 }
