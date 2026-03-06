@@ -5,8 +5,6 @@ import { METHODS } from 'http'
 // const API_BASE_URL = "https://backend.metruyencv.com/api"
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL || 'http://localhost:8000/api/v1'
-const API_BASE_URL_V2 =
-  process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL_V2 || 'http://localhost:8000/api/v2'
 
 /**
  * Server-side API client for direct backend access
@@ -21,7 +19,7 @@ export const serverApi = {
       try {
         const res = await fetch(
           // `${API_BASE_URL}/books/search?keyword=${slug}&page=1&limit=5`,
-          `${API_BASE_URL}/books/${slug}`,
+          `${API_BASE_URL}/books/slug/${slug}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -46,7 +44,7 @@ export const serverApi = {
       try {
         const res = await fetch(
           //   `${API_BASE_URL}/chapters?filter%5Bbook_id%5D=${storyId}&filter%5Btype%5D=published`,
-          `${API_BASE_URL_V2}/chapters/${storyId}`,
+          `${API_BASE_URL_V1}/chapters/${storyId}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -140,7 +138,7 @@ export const serverApi = {
     ): Promise<string> => {
       try {
         const res = await fetch(
-          `${API_BASE_URL}/chapters/content/${slug}/${chapterId}`,
+          `${API_BASE_URL}/chapters/content/slug/${slug}/${chapterId}`,
           {
             headers: {
               'Content-Type': 'application/json',

@@ -179,7 +179,7 @@ export const homeApi = {
       }
       // Fetch topboxes from backend
       const res = await fetch(
-        `${API_BASE_URL}/topboxes?filter%5Btopboxable.kind%5D=1&limit=5`,
+        `https://backend.metruyencv.com/api/topboxes?filter%5Btopboxable.kind%5D=1&limit=5`,
         {
           headers: {
             'Content-Type': 'application/json',

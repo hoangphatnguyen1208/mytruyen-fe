@@ -16,8 +16,11 @@ export function StoriesList({ stories, vertical, href }: Props) {
   return vertical ? (
     <div className="w-full py-6">
       <div className="flex flex-wrap gap-4">
-        {stories.slice(0, 12).map((story) => (
-          <StoryCardVertical key={story.id} story={story} />
+        {stories.slice(0, 12).map((story, index) => (
+          <StoryCardVertical
+            key={story.id || `story-v-${index}`}
+            story={story}
+          />
         ))}
       </div>
       {/* <div className="flex justify-center mt-6">
@@ -32,8 +35,11 @@ export function StoriesList({ stories, vertical, href }: Props) {
   ) : (
     <div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {stories.map((story: Story) => (
-          <StoryCardHorizontal key={story.id} story={story} />
+        {stories.map((story: Story, index: number) => (
+          <StoryCardHorizontal
+            key={story.id || `story-${index}`}
+            story={story}
+          />
         ))}
       </div>
       {/* <div className="flex justify-center mt-6">

@@ -25,11 +25,10 @@ export default async function Home() {
       homeApi.getCompletedStories(10, 1),
       homeApi.getSuggestedStories(10, 1),
     ])
-  const hotStories = hotList.map((story: HotStory) => {
-    // story.book.reading_count = story.reading_count
+  const hotStories: Story[] = hotList.map((story: HotStory) => {
     return {
-      // ...story.book,
-      ...story,
+      ...story.book!,
+      reading_count: story.reading_count,
     }
   })
   return (

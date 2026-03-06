@@ -13,8 +13,22 @@ import { retry } from './retry'
 const API_BASE_URL_V1 =
   process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL ||
   'http://localhost:8000/api/v1'
-const API_BASE_URL_V2 =
-  process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL_V2 || 'http://localhost:8000/api/v2'
+
+/**
+ * Check if a string is a YouTube URL
+ */
+export function isYouTubeUrl(url: string): boolean {
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  return youtubeRegex.test(url.trim())
+}
+
+/**
+ * Extract YouTube video ID from URL
+ */
+export function extractYouTubeId(url: string): string | null {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  return match ? match[1] : null
+}
 
 // Create a fetch function with middleware applied
 const fetchWithMiddleware = applyMiddleware([withLogging])
@@ -65,7 +79,7 @@ export const api = {
           return cachedBook
         }
 
-        const res = await fetch(`${API_BASE_URL_V2}/books/${bookId}`, {
+        const res = await fetch(`${API_BASE_URL_V1}/books/id/${bookId}`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`,
@@ -109,7 +123,7 @@ export const api = {
         // const res = await fetchWithMiddleware(
         //     `/api/chapters?filter[book_id]=${storyId}&filter[type]=published`
         // )
-        const res = await fetch(`${API_BASE_URL_V2}/chapters/${storyId}`, {
+        const res = await fetch(`${API_BASE_URL_V1}/chapters/${storyId}`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`,
@@ -489,6 +503,85 @@ export const api = {
       } catch (error) {
         console.error('Error searching stories:', error)
         return []
+      }
+    },
+
+    /**
+     * Search using audio file
+     */
+    audio: async (
+      audioFile: File,
+      language: string = 'vi',
+    ): Promise<SearchResult[]> => {
+      try {
+        const formData = new FormData()
+        formData.append('audio_file', audioFile)
+        formData.append('language', language)
+
+        const res = await fetch('/api/v1/search/audio', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}))
+          throw new Error(errorData.message || 'Audio search failed')
+        }
+
+        const data = await res.json()
+
+        if (!data.success && data.message !== 'Success') {
+          throw new Error(data.message || 'Audio search failed')
+        }
+
+        return data.data || []
+      } catch (error) {
+        console.error('Error searching with audio:', error)
+        throw error
+      }
+    },
+
+    /**
+     * Search stories by YouTube URL
+     */
+    youtube: async (youtubeUrl: string): Promise<SearchResult[]> => {
+      try {
+        const cacheKey = `search_youtube_${youtubeUrl}`
+
+        // Check cache first
+        const cachedResults = apiCache.get<SearchResult[]>(cacheKey)
+        if (cachedResults) {
+          return cachedResults
+        }
+
+        const res = await fetch(`${API_BASE_URL_V1}/search/youtube`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: youtubeUrl }),
+        })
+
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}))
+          throw new Error(errorData.message || 'YouTube search failed')
+        }
+
+        const data: SearchResponse = await res.json()
+
+        if (!data.success) {
+          throw new Error(data.message || 'YouTube search failed')
+        }
+
+        const results = data.data || []
+
+        // Cache search results for 5 minutes
+        apiCache.set(cacheKey, results, 5 * 60 * 1000)
+
+        return results
+      } catch (error) {
+        console.error('Error searching with YouTube URL:', error)
+        throw error
       }
     },
   },

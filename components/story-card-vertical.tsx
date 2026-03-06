@@ -9,7 +9,6 @@ export function StoryCardVertical({ story }: { story: Story }) {
   return (
     <div className="flex">
       <Link
-        key={story.id}
         href={`/truyen/${story.slug}`}
         className="group flex w-[235px] flex-col overflow-hidden rounded-lg border bg-card transition-all hover:shadow-md"
       >
