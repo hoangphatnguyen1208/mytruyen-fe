@@ -123,7 +123,7 @@ export const api = {
         // const res = await fetchWithMiddleware(
         //     `/api/chapters?filter[book_id]=${storyId}&filter[type]=published`
         // )
-        const res = await fetch(`${API_BASE_URL_V1}/chapters/${storyId}`, {
+        const res = await fetch(`${API_BASE_URL_V1}/chapters/id/${storyId}`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`,
@@ -264,6 +264,7 @@ export const api = {
           3, // 3 retries
           300, // 300ms initial delay
         )
+        console.log('All chapters before search filter', allChapters)
 
         // Filter by search term if provided
         if (searchTerm) {

@@ -6,6 +6,9 @@ import { vi } from "date-fns/locale/vi"
 import { formatDistanceToNow } from "date-fns"
 import { Loader } from "lucide-react"
 
+const MYTRUYEN_API_BASE_URL =
+  process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL || 'http://localhost:3000'
+
 export function NewChapter() {
     const [newChapters, setNewChapters] = useState([])
     const [isLoading, setIsLoading] = useState(true)
@@ -13,14 +16,11 @@ export function NewChapter() {
     useEffect(() => {
         const fetchNewChapter = () => {
             const params = new URLSearchParams({
-                "filter[gender]": "1",
-                "filter[state]": "published",
-                include: "author,genres,creator",
                 limit: "10",
                 page: "1",
                 sort: "-new_chap_at"
             })
-            fetch(`/api/stories?${params.toString()}`)
+            fetch(`${MYTRUYEN_API_BASE_URL}/books?${params.toString()}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setNewChapters(data.data)
