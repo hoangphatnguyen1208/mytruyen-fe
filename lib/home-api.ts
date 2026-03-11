@@ -179,14 +179,7 @@ export const homeApi = {
       }
       // Fetch topboxes from backend
       const res = await fetch(
-        `https://backend.metruyencv.com/api/topboxes?filter%5Btopboxable.kind%5D=1&limit=5`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`,
-          },
-          next: { revalidate: 3600 },
-        },
+        `${API_BASE_URL}/books/topboxes?kind=1&limit=5`,
       )
       const data = await res.json()
       // raw data expected under data.data

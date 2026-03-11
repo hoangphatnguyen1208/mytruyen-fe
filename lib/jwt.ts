@@ -94,7 +94,6 @@ export function getUserFromToken(token: string): {
 
   return {
     id: payload.sub || payload.user_id || payload.id || '',
-    name: payload.name || payload.username || '',
     email: payload.email || '',
     role: payload.role || 'user',
   }

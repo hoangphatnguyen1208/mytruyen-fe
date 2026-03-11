@@ -45,14 +45,8 @@ export function UserNav() {
       router.push('/')
     }, 100)
   }
-
-  const initials = user?.name
-    ? user.name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-    : 'U' // fallback nếu user hoặc name không tồn tại
+  // Lấy chữ cái đầu tiên của email người dùng để hiển thị trong AvatarFallback
+  const initials = user.email[0].toUpperCase()
 
   return (
     <DropdownMenu>
@@ -66,7 +60,6 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
@@ -75,7 +68,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link
-            href="/profile"
+            href="/ho-so"
             className="flex w-full cursor-pointer items-center"
           >
             <User className="mr-2 h-4 w-4" />
@@ -93,7 +86,7 @@ export function UserNav() {
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link
-            href="/settings"
+            href="/cai-dat"
             className="flex w-full cursor-pointer items-center"
           >
             <Settings className="mr-2 h-4 w-4" />
