@@ -29,10 +29,10 @@ export function UserNav() {
     return (
       <div className="flex gap-2">
         <Button variant="outline" asChild>
-          <Link href="/login">Đăng nhập</Link>
+          <Link href="/dang-nhap">Đăng nhập</Link>
         </Button>
         <Button asChild>
-          <Link href="/signup">Đăng ký</Link>
+          <Link href="/dang-ky">Đăng ký</Link>
         </Button>
       </div>
     )
@@ -100,7 +100,7 @@ export function UserNav() {
             <span>Cài đặt</span>
           </Link>
         </DropdownMenuItem>
-        {user && user.role === 'admin' && (
+        {user && (
           <DropdownMenuItem asChild>
             <Link
               href="/admin"

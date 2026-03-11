@@ -20,7 +20,6 @@ import {
 
 type User = {
   id: string
-  name: string
   email: string
 }
 
@@ -86,9 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json()
 
-      // Backend trả về token trong data.token hoặc data.access_token
-      if (response.ok && (data.token || data.access_token)) {
-        const token = data.token || data.access_token
+      // Backend trả về token trong data.access_token
+      if (response.ok && data.data.access_token) {
+        const token = data.data.access_token
 
         // Lưu token vào localStorage
         localStorage.setItem('auth_token', token)
@@ -101,8 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (userData) {
           setUser({
             ...userData,
-            name: userData.name || data.user?.name,
-            email: userData.email || data.user?.email,
+            email: userData.email,
           })
           setIsLoading(false)
           return true
@@ -132,8 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json()
 
       // Backend trả về token sau khi đăng ký thành công
-      if (response.ok && (data.token || data.access_token)) {
-        const token = data.token || data.access_token
+      if (response.ok && data.data.access_token) {
+        const token = data.data.access_token
 
         // Lưu token vào localStorage
         localStorage.setItem('auth_token', token)
@@ -146,7 +144,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (userData) {
           setUser({
             ...userData,
-            name: userData.name || name,
             email: userData.email || email,
           })
           setIsLoading(false)

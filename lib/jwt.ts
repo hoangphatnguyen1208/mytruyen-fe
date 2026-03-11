@@ -84,7 +84,6 @@ export function removeToken(): void {
  */
 export function getUserFromToken(token: string): {
   id: string
-  name: string
   email: string
   role: string
 } | null {
