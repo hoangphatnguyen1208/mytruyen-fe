@@ -81,13 +81,13 @@ export interface ChapterDetail {
   name: string
   index: number
   word_count: number
+  published: boolean
+  comment_count: number
+  book_id: number
   view_count: number
-  user_id: number
   published_at: string
-  unlock_price: number
-  unlock_key_price: number
-  is_locked: null
-  object_type: string
+  created_at: string
+  updated_at: string
 }
 
 export interface Banner {

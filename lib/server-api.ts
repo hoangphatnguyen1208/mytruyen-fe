@@ -18,7 +18,6 @@ export const serverApi = {
     getBySlug: async (slug: string): Promise<Story | null> => {
       try {
         const res = await fetch(
-          // `${API_BASE_URL}/books/search?keyword=${slug}&page=1&limit=5`,
           `${API_BASE_URL}/books/slug/${slug}`,
           {
             headers: {
@@ -43,8 +42,7 @@ export const serverApi = {
     getChapters: async (storyId: number | string): Promise<ChapterDetail[]> => {
       try {
         const res = await fetch(
-          //   `${API_BASE_URL}/chapters?filter%5Bbook_id%5D=${storyId}&filter%5Btype%5D=published`,
-          `${API_BASE_URL_V1}/chapters/${storyId}`,
+          `${API_BASE_URL}/chapters/${storyId}`,
           {
             headers: {
               'Content-Type': 'application/json',

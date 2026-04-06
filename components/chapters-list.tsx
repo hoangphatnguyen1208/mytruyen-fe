@@ -51,13 +51,13 @@ export function ChaptersList({ story }: Props) {
   const fetchChapters = useCallback(
     async (
       page: number,
-      filters: { searchTerm: string; sortOrder: 'asc' | 'desc' },
+      filters: { searchTerm: string; sort: 'index' | '-index' },
     ) => {
       const data = await api.story.getPaginatedChapters(
         story.id,
         page,
-        30, // chaptersPerPage
-        filters.sortOrder,
+        30,
+        filters.sort,
         filters.searchTerm,
       )
       // Transform the data to match our hook's expected format
@@ -84,11 +84,11 @@ export function ChaptersList({ story }: Props) {
     refresh,
   } = usePagination<
     ChapterDetail,
-    { searchTerm: string; sortOrder: 'asc' | 'desc' }
+    { searchTerm: string; sort: 'index' | '-index' }
   >({
     fetchFn: fetchChapters,
     initialPage: 1,
-    initialFilters: { searchTerm: '', sortOrder: 'desc' },
+    initialFilters: { searchTerm: '', sort: '-index' },
     perPage: 30,
   }) // Effect to update filters when search term changes (with debounce)
   useEffect(() => {
@@ -102,11 +102,11 @@ export function ChaptersList({ story }: Props) {
 
   // Handle sort order change
   const handleSortChange = useCallback(
-    (value: 'asc' | 'desc') => {
+    (value: 'index' | '-index') => {
       startTransition(() => {
         setFilters({
           ...filters,
-          sortOrder: value,
+          sort: value,
         })
       })
     },
@@ -171,7 +171,7 @@ export function ChaptersList({ story }: Props) {
           />
         </div>{' '}
         <Select
-          value={filters.sortOrder}
+          value={filters.sort}
           onValueChange={handleSortChange}
           disabled={isLoading || isPending}
         >

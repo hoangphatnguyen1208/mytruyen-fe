@@ -231,7 +231,7 @@ export const api = {
       storyId: number | string,
       page: number = 1,
       limit: number = 30,
-      sortOrder: 'asc' | 'desc' = 'desc',
+      sort: 'index' | '-index' = '-index',
       searchTerm: string = '',
     ): Promise<{
       chapters: ChapterDetail[]
@@ -240,9 +240,7 @@ export const api = {
       totalPages: number
     }> => {
       try {
-        // For paginated requests, build a unique cache key
-        const cacheKey = `chapters_paginated_${storyId}_${page}_${limit}_${sortOrder}_${searchTerm}`
-        const allChaptersCacheKey = `chapters_${storyId}`
+        const cacheKey = `chapters_paginated_${storyId}_${page}_${limit}_${sort}_${searchTerm}`
 
         // Check cache first
         const cachedResponse = apiCache.get<{
@@ -256,55 +254,51 @@ export const api = {
           return cachedResponse
         }
 
-        // First, we need to get all chapters to perform proper pagination
-        // In a real API, this would be handled server-side
-        // Use retry mechanism for resilience
-        let allChapters = await retry(
-          () => api.story.getChapters(storyId),
-          3, // 3 retries
-          300, // 300ms initial delay
-        )
-        console.log('All chapters before search filter', allChapters)
-
-        // Filter by search term if provided
-        if (searchTerm) {
-          const searchLower = searchTerm.toLowerCase()
-          allChapters = allChapters.filter(
-            (chapter) =>
-              chapter.name.toLowerCase().includes(searchLower) ||
-              `Chương ${chapter.index}`.toLowerCase().includes(searchLower),
-          )
-        }
-        console.log('All chapters after search filter', allChapters)
-
-        // Sort the chapters
-        const sortedChapters = [...allChapters].sort((a, b) => {
-          if (sortOrder === 'asc') {
-            return a.index - b.index
-          } else {
-            return b.index - a.index
-          }
+        const queryParams = new URLSearchParams({
+          limit: String(limit),
+          page: String(page),
+          sort: sort,
         })
 
-        // Calculate pagination values
-        const total = sortedChapters.length
-        const totalPages = Math.max(1, Math.ceil(total / limit))
-        const startIndex = (page - 1) * limit
-        const endIndex = startIndex + limit
+        if (searchTerm.trim()) {
+          queryParams.set('search', searchTerm.trim())
+        }
 
-        // Get the paginated chapters
-        const paginatedChapters = sortedChapters.slice(startIndex, endIndex)
+        const res = await fetch(
+          `${API_BASE_URL_V1}/chapters/id/${storyId}?${queryParams.toString()}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${process.env.METRUYEN_TOKEN}`,
+            },
+            next: { revalidate: 300 },
+          },
+        )
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch paginated chapters')
+        }
+
+        const payload = await res.json()
+        const paginatedChapters = Array.isArray(payload?.data) ? payload.data : []
+        const rawPagination = payload?.pagination ?? {}
+
+        const total = Number(rawPagination.total_items ?? paginatedChapters.length ?? 0)
+        const currentPage = Math.max(1, Number(rawPagination.page ?? page) || page)
+        const totalPages = Math.max(
+          0,
+          Number(rawPagination.total_pages ?? Math.ceil(total / limit)) || 0,
+        )
 
         const result = {
           chapters: paginatedChapters,
           total,
-          page,
+          page: currentPage,
           totalPages,
         }
 
         // Cache the response for 5 minutes
-        // Also register it as related to the main chapters cache
-        apiCache.set(cacheKey, result, 5 * 60 * 1000, [allChaptersCacheKey])
+        apiCache.set(cacheKey, result, 5 * 60 * 1000)
 
         return result
       } catch (error) {
