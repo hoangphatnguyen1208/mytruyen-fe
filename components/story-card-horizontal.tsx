@@ -28,7 +28,7 @@ export function StoryCardHorizontal({ story }: { story: Story }) {
             <div className="flex items-center py-1 text-amber-500">
               <Star className="h-4 w-4 fill-current" />
               <span className="ml-1 text-sm">
-                {Number(story.review_score).toFixed(1)}
+                {Number(story.average_rating).toFixed(1)}
               </span>
             </div>
           </div>

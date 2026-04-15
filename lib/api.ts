@@ -231,7 +231,7 @@ export const api = {
       storyId: number | string,
       page: number = 1,
       limit: number = 30,
-      sort: 'index' | '-index' = '-index',
+      sortOrder: 'asc' | 'desc' = 'desc',
       searchTerm: string = '',
     ): Promise<{
       chapters: ChapterDetail[]
@@ -240,7 +240,7 @@ export const api = {
       totalPages: number
     }> => {
       try {
-        const cacheKey = `chapters_paginated_${storyId}_${page}_${limit}_${sort}_${searchTerm}`
+        const cacheKey = `chapters_paginated_${storyId}_${page}_${limit}_${sortOrder}_${searchTerm}`
 
         // Check cache first
         const cachedResponse = apiCache.get<{
@@ -257,7 +257,7 @@ export const api = {
         const queryParams = new URLSearchParams({
           limit: String(limit),
           page: String(page),
-          sort: sort,
+          sort_order: sortOrder,
         })
 
         if (searchTerm.trim()) {
@@ -476,9 +476,9 @@ export const api = {
     /**
      * Search stories by keyword (legacy method)
      */
-    stories: async (keyword: string, page = 1): Promise<Story[]> => {
+    meili: async (keyword: string, page = 1, limit = 5): Promise<Story[]> => {
       try {
-        const cacheKey = `search_${keyword}_${page}`
+        const cacheKey = `search_${keyword}_${page}_${limit}`
 
         // For search queries, use a shorter cache time
         const cachedResults = apiCache.get<Story[]>(cacheKey)
@@ -486,7 +486,7 @@ export const api = {
           return cachedResults
         }
         const res = await fetchWithMiddleware(
-          `/api/books/search?keyword=${keyword}&page=${page}`,
+          `${API_BASE_URL_V1}/search/meili?query=${encodeURIComponent(keyword)}&page=${page}&limit=${limit}`,
         )
         const data = await res.json()
         const results = data.data || []
@@ -729,7 +729,7 @@ export async function searchStories(
   keyword: string,
   page = 1,
 ): Promise<Story[]> {
-  return api.search.stories(keyword, page)
+  return api.search.meili(keyword, page)
 }
 
 /**

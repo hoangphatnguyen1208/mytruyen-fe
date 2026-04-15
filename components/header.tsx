@@ -18,6 +18,7 @@ import { useOnClickOutside } from '@/hooks/use-click-outside'
 import { Story } from '@/types/api'
 import { ScrollProgress } from './scrollProgress'
 import { isYouTubeUrl } from '@/lib/api'
+import { api } from '@/lib/api'
 
 export function Header() {
   const { t } = useLanguage()
@@ -47,13 +48,8 @@ export function Header() {
 
       setIsLoading(true)
       try {
-        const API_BASE_URL = process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL || "http://localhost:3000/api/v1"
-        
-        const response = await fetch(
-          `${API_BASE_URL}/search?query_text=${encodeURIComponent(searchQuery)}&limit=5`,
-        )
-        const data = await response.json()
-        setSuggestions(data.data)
+        const data = await api.search.meili(searchQuery)
+        setSuggestions(data)
         setShowSuggestions(true)
       } catch (error) {
         console.error('Error fetching suggestions:', error)

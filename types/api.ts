@@ -48,6 +48,7 @@ export interface Story {
   synopsis: string
   vote_count?: number
   review_score?: string
+  average_rating?: string
   review_count?: number
   comment_count: number
   chapter_count: number

@@ -4,87 +4,87 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SearchResult } from '@/types/api'
-import { SearchResults } from '@/components/search-results'
+import { Story } from '@/types/api'
 import { api } from '@/lib/api'
 import { Search } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { StoryCardHorizontal } from '@/components/story-card-horizontal'
 
 export default function SearchPage() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
-  const youtubeUrl = searchParams.get('youtube') || ''
-  const isAudioSearch = searchParams.get('audio') === '1'
-  const [results, setResults] = useState<SearchResult[]>([])
+  // const youtubeUrl = searchParams.get('youtube') || ''
+  // const isAudioSearch = searchParams.get('audio') === '1'
+  const [books, setBooks] = useState<Story[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState<string>('')
   const { toast } = useToast()
 
   // Load audio search results from sessionStorage
-  useEffect(() => {
-    if (isAudioSearch) {
-      const savedResults = sessionStorage.getItem('audioSearchResults')
-      const savedQuery = sessionStorage.getItem('audioSearchQuery')
+  // useEffect(() => {
+  //   if (isAudioSearch) {
+  //     const savedResults = sessionStorage.getItem('audioSearchResults')
+  //     const savedQuery = sessionStorage.getItem('audioSearchQuery')
 
-      if (savedResults) {
-        try {
-          const parsedResults = JSON.parse(savedResults)
-          setResults(parsedResults)
-          setLoading(false)
+  //     if (savedResults) {
+  //       try {
+  //         const parsedResults = JSON.parse(savedResults)
+  //         setResults(parsedResults)
+  //         setLoading(false)
 
-          if (savedQuery) {
-            setSearchQuery(savedQuery)
-          }
+  //         if (savedQuery) {
+  //           setSearchQuery(savedQuery)
+  //         }
 
-          // Clear from sessionStorage
-          sessionStorage.removeItem('audioSearchResults')
-          sessionStorage.removeItem('audioSearchQuery')
-        } catch (error) {
-          console.error('Error parsing audio search results:', error)
-          setLoading(false)
-        }
-      } else {
-        setLoading(false)
-      }
-      return
-    }
-  }, [isAudioSearch])
+  //         // Clear from sessionStorage
+  //         sessionStorage.removeItem('audioSearchResults')
+  //         sessionStorage.removeItem('audioSearchQuery')
+  //       } catch (error) {
+  //         console.error('Error parsing audio search results:', error)
+  //         setLoading(false)
+  //       }
+  //     } else {
+  //       setLoading(false)
+  //     }
+  //     return
+  //   }
+  // }, [isAudioSearch])
 
-  // Handle YouTube URL search
-  useEffect(() => {
-    async function fetchYouTubeSearchResults() {
-      if (!youtubeUrl || isAudioSearch) return
+  // // Handle YouTube URL search
+  // useEffect(() => {
+  //   async function fetchYouTubeSearchResults() {
+  //     if (!youtubeUrl || isAudioSearch) return
 
-      setLoading(true)
-      setSearchQuery(`Tìm kiếm bằng YouTube: "${youtubeUrl}"`)
-      try {
-        const content = await api.search.youtube(youtubeUrl)
-        setResults(content)
-      } catch (error) {
-        console.error('Error fetching YouTube search results:', error)
-        toast({
-          title: 'Lỗi tìm kiếm',
-          description: 'Không thể tìm kiếm bằng YouTube URL. Vui lòng thử lại.',
-          variant: 'destructive',
-        })
-        setResults([])
-      } finally {
-        setLoading(false)
-      }
-    }
+  //     setLoading(true)
+  //     setSearchQuery(`Tìm kiếm bằng YouTube: "${youtubeUrl}"`)
+  //     try {
+  //       const content = await api.search.youtube(youtubeUrl)
+  //       setResults(content)
+  //     } catch (error) {
+  //       console.error('Error fetching YouTube search results:', error)
+  //       toast({
+  //         title: 'Lỗi tìm kiếm',
+  //         description: 'Không thể tìm kiếm bằng YouTube URL. Vui lòng thử lại.',
+  //         variant: 'destructive',
+  //       })
+  //       setResults([])
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
 
-    fetchYouTubeSearchResults()
-  }, [youtubeUrl, isAudioSearch, toast])
+  //   fetchYouTubeSearchResults()
+  // }, [youtubeUrl, isAudioSearch, toast])
 
   useEffect(() => {
     async function fetchSearchResults() {
-      if (!query || isAudioSearch || youtubeUrl) return
+      // if (!query || isAudioSearch || youtubeUrl) return
 
       setLoading(true)
       setSearchQuery(`Tìm kiếm: "${query}"`)
       try {
-        const content = await api.search.content(query)
-        setResults(content)
+        const data = await api.search.meili(query, 1, 20)
+        setBooks(data)
       } catch (error) {
         console.error('Error fetching search results:', error)
       } finally {
@@ -93,7 +93,8 @@ export default function SearchPage() {
     }
 
     fetchSearchResults()
-  }, [query, isAudioSearch, youtubeUrl])
+  // }, [query, isAudioSearch, youtubeUrl])
+  }, [query])
 
   const LoadingSkeleton = () => (
     <div className="space-y-4">
@@ -123,7 +124,7 @@ export default function SearchPage() {
         )}
       </div>
 
-      {!query && !isAudioSearch && !youtubeUrl ? (
+      {!query ? (
         <div className="py-12 text-center">
           <Search className="mx-auto mb-4 h-16 w-16 text-muted-foreground/50" />
           <p className="text-xl text-muted-foreground">
@@ -134,8 +135,15 @@ export default function SearchPage() {
         <div>
           {loading ? (
             <LoadingSkeleton />
-          ) : results.length > 0 ? (
-            <SearchResults results={results} />
+          ) : books.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              {books.map((book, index) => (
+                <StoryCardHorizontal
+                  key={book.id || `search-book-${index}`}
+                  story={book}
+                />
+              ))}
+            </div>
           ) : (
             <div className="py-12 text-center">
               <Search className="mx-auto mb-4 h-16 w-16 text-muted-foreground/50" />
