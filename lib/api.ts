@@ -4,15 +4,13 @@ import {
   Comment,
   SearchResponse,
   SearchResult,
+  PaginatedResponse,
+  Banner,
 } from '@/types/api'
 import { apiCache } from './cache'
 import { applyMiddleware, withLogging } from './middleware'
 import { retry } from './retry'
-
-// const API_BASE_URL = "https://backend.metruyencv.com/api"
-const API_BASE_URL_V1 =
-  process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL ||
-  'http://localhost:8000/api/v1'
+import { API_BASE_URL_V1 } from './config'
 
 /**
  * Check if a string is a YouTube URL
@@ -34,7 +32,41 @@ export function extractYouTubeId(url: string): string | null {
 const fetchWithMiddleware = applyMiddleware([withLogging])
 
 export const api = {
-  story: {
+  book: {
+    /**
+     * Get list books
+     * @param page Page number (starting from 1)
+     * @param limit Number of items per page
+     * @param sort Sorting field, e.g. "chapter_per_week" or "-chapter_per_week"
+     * @param status Optional status filter (e.g. 1 for completed, 0 for ongoing)
+     */
+    getList: async (params: { page: number; limit: number, sort: string, status?: number }): Promise<PaginatedResponse<Story>> => {
+      try {
+        const { page, limit, sort, status } = params
+
+        // Check cache first
+        const cacheKey = `books_page_${params.page}_limit_${params.limit}_sort_${params.sort}` + (params.status !== undefined ? `_status_${params.status}` : '')
+        const cachedResponse = apiCache.get<PaginatedResponse<Story>>(cacheKey)
+        if (cachedResponse) {
+          return cachedResponse
+        }
+        
+        // Using local API route to fetch books with pagination and sorting
+        const res = await fetchWithMiddleware(
+          `${API_BASE_URL_V1}/books?page=${page}&limit=${limit}&sort=${sort}` + (status !== undefined ? `&status=${status}` : ''),
+        )
+        const data = await res.json()
+        return {
+          data: data.data,
+          pagination: data.pagination 
+        }
+      } catch (error) {
+        console.error('Error fetching books with params:', params, error)
+        return { data: [], pagination: { page: 1, size: 0, total_items: 0, total_pages: 0 } }
+      }
+    },
+
+
     /**
      * Get a story by its slug
      */
@@ -48,18 +80,17 @@ export const api = {
           return cachedStory
         }
         const res = await fetchWithMiddleware(
-          `/api/books/search?keyword=${slug}&page=1`,
+          `${API_BASE_URL_V1}/books/slug/${slug}`,
         )
         const data = await res.json()
-        const story = data.data[0] || null
-        console.log('story', story)
+        const book = data.data || null
 
         // Cache the response for 10 minutes
-        if (story) {
-          apiCache.set(cacheKey, story, 10 * 60 * 1000)
+        if (book) {
+          apiCache.set(cacheKey, book, 10 * 60 * 1000)
         }
 
-        return story
+        return book
       } catch (error) {
         console.error('Error fetching story:', error)
         return null
@@ -112,17 +143,14 @@ export const api = {
       storyId: number | string,
     ): Promise<ChapterDetail[]> => {
       try {
-        // const cacheKey = `chapters_${storyId}`
+        const cacheKey = `chapters_${storyId}`
 
-        // // Check cache first
-        // const cachedChapters = apiCache.get<ChapterDetail[]>(cacheKey)
-        // if (cachedChapters) {
-        //   return cachedChapters
-        // }
-        // Use our local API proxy instead of calling the external API directly
-        // const res = await fetchWithMiddleware(
-        //     `/api/chapters?filter[book_id]=${storyId}&filter[type]=published`
-        // )
+        // Check cache first
+        const cachedChapters = apiCache.get<ChapterDetail[]>(cacheKey)
+        if (cachedChapters) {
+          return cachedChapters
+        }
+
         const res = await fetch(`${API_BASE_URL_V1}/chapters/id/${storyId}`, {
           headers: {
             'Content-Type': 'application/json',
@@ -144,86 +172,6 @@ export const api = {
       }
     },
 
-    /**
-     * Get chapters for a story by page from API
-     * This method prepares for direct server-side pagination when the API supports it
-     */
-    getChaptersByPage: async (
-      storyId: number | string,
-      page: number = 1,
-      limit: number = 30,
-    ): Promise<{
-      chapters: ChapterDetail[]
-      pagination: {
-        total: number
-        currentPage: number
-        perPage: number
-        totalPages: number
-      }
-    }> => {
-      try {
-        const cacheKey = `chapters_page_${storyId}_${page}_${limit}`
-
-        // Check cache first
-        const cachedResponse = apiCache.get<{
-          chapters: ChapterDetail[]
-          pagination: {
-            total: number
-            currentPage: number
-            perPage: number
-            totalPages: number
-          }
-        }>(cacheKey)
-
-        if (cachedResponse) {
-          return cachedResponse
-        } // Currently, we simulate pagination by getting all chapters and slicing
-        // In the future, this should be replaced with a direct API call that supports pagination
-        const res = await retry(
-          async () => {
-            return await fetchWithMiddleware(
-              `/api/chapters?filter[book_id]=${storyId}&filter[type]=published`,
-            )
-          },
-          3, // 3 retries
-          300, // 300ms initial delay
-        )
-
-        const data = await res.json()
-        const chapters = data.data || []
-
-        // Calculate total from the full list (server should provide this)
-        const total = chapters.length
-        const totalPages = Math.max(1, Math.ceil(total / limit))
-
-        // Create pagination data
-        const result = {
-          chapters: chapters.slice((page - 1) * limit, page * limit),
-          pagination: {
-            total,
-            currentPage: page,
-            perPage: limit,
-            totalPages,
-          },
-        }
-
-        // Cache the response for 5 minutes
-        apiCache.set(cacheKey, result, 5 * 60 * 1000)
-
-        return result
-      } catch (error) {
-        console.error('Error fetching chapters by page:', error)
-        return {
-          chapters: [],
-          pagination: {
-            total: 0,
-            currentPage: page,
-            perPage: limit,
-            totalPages: 0,
-          },
-        }
-      }
-    },
     /**
      * Get chapters for a story with pagination
      */
@@ -398,7 +346,7 @@ export const api = {
       next: ChapterDetail | null
     }> => {
       try {
-        const chapters = await api.story.getChapters(storyId)
+        const chapters = await api.book.getChapters(storyId)
 
         // Sort chapters by index
         const sortedChapters = [...chapters].sort((a, b) => a.index - b.index)
@@ -683,23 +631,65 @@ export const api = {
       }
     },
   },
+
+  banner: {
+    /**
+     * Get banners
+     */
+    getBanners: async (): Promise<Banner[]> => {
+      try {
+        const cacheKey = 'banners'
+
+        // Check cache first
+        const cachedBanners = apiCache.get<Banner[]>(cacheKey)
+        if (cachedBanners) {
+          return cachedBanners
+        }
+
+        const res = await fetchWithMiddleware(
+          `${API_BASE_URL_V1}/books/topboxes?kind=1&limit=5`,
+        )
+        const data = await res.json()
+        // raw data expected under data.data
+        const items: any[] = Array.isArray(data.data) ? data.data : []
+        const banners: Banner[] = items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          slug: item.url?.split('.com')[1] || new URL(item.url).pathname,
+          banner_desktop: item.banner_desktop || item.bg_desktop,
+          banner_mobile: item.banner_mobile,
+          created_at: item.created_at,
+          updated_at: item.updated_at,
+          owner_name: item.owner_name,
+        }))
+
+        // Cache for 1 minute
+        apiCache.set(cacheKey, banners, 1 * 60 * 1000)
+
+        return banners
+      } catch (error) {
+        console.error('Error fetching banners:', error)
+        return []
+      }
+    },
+  },
 }
 
 /**
  * Get a story by its slug
- * @deprecated Use api.story.getBySlug instead
+ * @deprecated Use api.book.getBySlug instead
  */
 export async function getStoryBySlug(slug: string): Promise<Story | null> {
-  return api.story.getBySlug(slug)
+  return api.book.getBySlug(slug)
 }
 
 /**
- * @deprecated Use api.story.getChapters instead
+ * @deprecated Use api.book.getChapters instead
  */
 export async function getStoryChapters(
   storyId: number | string,
 ): Promise<ChapterDetail[]> {
-  return api.story.getChapters(storyId)
+  return api.book.getChapters(storyId)
 }
 
 /**

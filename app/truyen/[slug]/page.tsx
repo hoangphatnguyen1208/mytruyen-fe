@@ -18,7 +18,7 @@ import { vi } from "date-fns/locale"
 import { ChaptersList } from "@/components/chapters-list"
 import { BackToTop } from "@/components/back-to-top"
 import { Metadata } from "next"
-import { serverApi } from "@/lib/server-api"
+import { api } from "@/lib/api"
 import { NotFound } from "@/components/not-found"
 
 export async function generateMetadata({
@@ -27,7 +27,7 @@ export async function generateMetadata({
     params: { slug: string }
 }): Promise<Metadata> {
     const { slug } = await params
-    const story = await serverApi.story.getBySlug(slug)
+    const story = await api.book.getBySlug(slug)
     return { title: story?.name || "Truyện" }
 }
 
@@ -39,7 +39,7 @@ interface Props {
 
 export default async function StoryPage({ params }: Props) {
     const slug = (await params).slug
-    const story = await serverApi.story.getBySlug(slug)
+    const story = await api.book.getBySlug(slug)
     if (!story) {
         return <NotFound message="Truyện không tồn tại" />
     }

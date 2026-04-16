@@ -3,11 +3,11 @@ import { ArrowLeft, ArrowRight, BookOpen } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import type { Metadata } from 'next'
-import { serverApi } from '@/lib/server-api'
 import { NotFound } from '@/components/not-found'
 import { BackToTop } from '@/components/back-to-top'
 import { ReadingContent } from '@/components/reading-content'
 import { ReadingTracker } from '@/components/reading-tracker'
+import { api } from '@/lib/api'
 
 export async function generateMetadata({
     params,
@@ -15,7 +15,7 @@ export async function generateMetadata({
     params: { slug: string; id: string }
 }): Promise<Metadata> {
     const { slug, id } = await params
-    const story = await serverApi.story.getBySlug(slug)
+    const story = await api.book.getBySlug(slug)
     return {
         title: story?.name ? `${story.name} - Chương ${id}` : `Chương ${id}`,
     }
@@ -32,16 +32,16 @@ export default async function ChapterPage({ params }: Props) {
     const { slug, id } = await params
     const chapterId = Number.parseInt(id)
 
-    const story = await serverApi.story.getBySlug(slug)
-    const chapterContent = await serverApi.chapter.getById(slug, chapterId)
+    const story = await api.book.getBySlug(slug)
+    const chapterContent = await api.chapter.getById(slug, chapterId)
 
     // Get chapter details and navigation information
     const chapters_detail = story
-        ? await serverApi.story.getChapters(story.id)
+        ? await api.book.getChapters(story.id)
         : []
     const chapterDetail = chapters_detail.find((c) => c.index === chapterId)
     const navigation = story
-        ? await serverApi.chapter.getNavigation(story.id, chapterId)
+        ? await api.chapter.getNavigation(story.id, chapterId)
         : { prev: null, next: null }
 
     if (!story || !chapterContent) {

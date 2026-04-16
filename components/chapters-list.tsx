@@ -53,7 +53,7 @@ export function ChaptersList({ story }: Props) {
       page: number,
       filters: { searchTerm: string; sort: '-index' | 'index' },
     ) => {
-      const data = await api.story.getPaginatedChapters(
+      const data = await api.book.getPaginatedChapters(
         story.id,
         page,
         30,

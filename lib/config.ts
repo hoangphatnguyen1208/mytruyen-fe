@@ -8,6 +8,8 @@ export const API_BASE_URL = "https://backend.metruyencv.com/api"
 // Base URL for local API
 export const LOCAL_API_BASE_URL = "http://localhost:3000/api"
 
+export const API_BASE_URL_V1 = process.env.NEXT_PUBLIC_MYTRUYEN_API_BASE_URL || 'http://localhost:8000/api/v1'
+
 /**
  * Cache TTL (Time-To-Live) configurations in milliseconds
  */

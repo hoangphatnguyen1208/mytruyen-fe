@@ -8,29 +8,22 @@ import { StoriesList } from '@/components/stories-list'
 import { NewChapter } from '@/components/new-chapter'
 import { ReadingHistory } from '@/components/reading-history'
 import { Metadata } from 'next'
+import { api } from '@/lib/api'
 
 export const metadata: Metadata = {
   title: 'MyTruyen - Đọc truyện online',
   description: 'Đọc truyện online, truyện hay nhất, truyện hot, truyện full',
 }
 
-import { homeApi } from '@/lib/home-api'
-
 export default async function Home() {
   // const { user } = useAuth()
-  const [hotList, newChapter, completeStories, suggestStories] =
+  const [hotListData, newChaptData, completeData, suggestData] =
     await Promise.all([
-      homeApi.getHotStories(60, 10, 1),
-      homeApi.getNewChapters(15, 1),
-      homeApi.getCompletedStories(10, 1),
-      homeApi.getSuggestedStories(10, 1),
+      api.book.getList({ page: 1, limit: 10, sort: '-comment_count' }),
+      api.book.getList({ page: 1, limit: 10, sort: '-new_chap_at' }),
+      api.book.getList({ page: 1, limit: 10, sort: 'average_rating', status: 2 }),
+      api.book.getList({ page: 1, limit: 10, sort: '-average_rating'}),
     ])
-  const hotStories: Story[] = hotList.map((story: HotStory) => {
-    return {
-      ...story.book!,
-      reading_count: story.reading_count,
-    }
-  })
   return (
     <div className="container mx-auto px-4 py-6">
       <SlidingBanner />
@@ -54,7 +47,7 @@ export default async function Home() {
             </TabsList>
             <TabsContent value="hot">
               <StoriesList
-                stories={suggestStories}
+                stories={suggestData.data}
                 vertical={false}
                 href="/truyen-de-cu"
               />
@@ -62,7 +55,7 @@ export default async function Home() {
 
             <TabsContent value="new">
               <StoriesList
-                stories={hotStories}
+                stories={hotListData.data}
                 vertical={false}
                 href="/truyen-hot"
               />
@@ -70,7 +63,7 @@ export default async function Home() {
 
             <TabsContent value="complete">
               <StoriesList
-                stories={completeStories}
+                stories={completeData.data}
                 vertical={false}
                 href="/truyen-hoan-thanh"
               />
@@ -84,7 +77,7 @@ export default async function Home() {
           Vừa cập nhật
         </h2>
         <StoriesList
-          stories={newChapter}
+          stories={newChaptData.data}
           vertical={true}
           href="/truyen-moi-cap-nhat"
         />
