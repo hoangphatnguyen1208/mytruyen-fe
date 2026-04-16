@@ -1,4 +1,4 @@
-import { BookOpen, Eye, Star, PenLine, Radio } from 'lucide-react'
+import { BookOpen, Star, PenLine, MessageSquareText } from 'lucide-react'
 import Link from 'next/link'
 import { Story } from '@/types/api'
 import Image from 'next/image'
@@ -43,19 +43,13 @@ export function StoryCardHorizontal({ story }: { story: Story }) {
             </div>
             <div className="flex items-center">
               <PenLine className="mr-1 h-3 w-3" />
-              {story.status_name}
+              {story.status?.name}
             </div>
-            {story.reading_count && story.reading_count > 0 ? (
-              <div className="flex items-center">
-                <Radio className="mr-1 h-3 w-3" />
-                {story.reading_count}
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <Eye className="mr-1 h-3 w-3" />
-                {story.view_count}
-              </div>
-            )}
+            <div className="flex items-center">
+              <MessageSquareText className="mr-1 h-3 w-3" />
+              {story.comment_count}
+            </div>
+            
             <button className="item-center ml-auto mt-1 h-auto rounded-md text-amber-700 outline outline-1 outline-amber-700">
               <p className="p-1">{story.genres ? story.genres[0].name : ''}</p>
             </button>

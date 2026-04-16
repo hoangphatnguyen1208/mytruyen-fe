@@ -27,6 +27,15 @@ export interface Genre {
   object_type: string
 }
 
+export interface BookStatus {
+  id: number
+  name: string
+  slug: string
+  description?: string
+  created_at: string
+  updated_at: string
+}
+
 export interface Story {
   id: number | string
   name: string
@@ -34,8 +43,7 @@ export interface Story {
   kind: number
   sex: number
   state?: string
-  status?: number
-  status_id?: number
+  status_id: number
   link?: string
   note?: string
   status_name?: string
@@ -66,10 +74,10 @@ export interface Story {
   ready_for_sale?: number
   discount_price?: number
   discount?: number
-  creator?: Creator
+  creator: Creator
   author: Author
-  genres?: Genre[]
-  reading_count?: number
+  genres: Genre[]
+  status: BookStatus
 }
 
 export interface HotStory {

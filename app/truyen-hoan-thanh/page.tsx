@@ -13,6 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { Story } from "@/types/api"
 
 export default function CompleteStoriesPage() {
   const [sortBy, setSortBy] = useState("rating")
@@ -99,7 +100,7 @@ export default function CompleteStoriesPage() {
   )
 }
 
-function StoryCard({ story }) {
+function StoryCard({ story }: { story: any }) {
   return (
     <div className="flex border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
       <div className="w-24 h-32 flex-shrink-0">
@@ -130,7 +131,7 @@ function StoryCard({ story }) {
           </div>
           <div className="flex items-center">
             <Clock className="h-3 w-3 mr-1" />
-            {story.status}
+            {story.status.name}
           </div>
         </div>
       </div>

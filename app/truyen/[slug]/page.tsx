@@ -2,11 +2,12 @@ import Link from "next/link"
 import {
     BookOpen,
     Calendar,
-    Clock,
     Heart,
     List,
     Share2,
-    User
+    User,
+    PenLine,
+    Clock,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -83,11 +84,11 @@ export default async function StoryPage({ params }: Props) {
                 <span>{story.view_count} lượt đọc</span>
               </div>
               <div className="flex items-center text-sm">
-                <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                <span>{story.status}</span>
+                <PenLine className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span>Trạng thái: {story.status.name}</span>
               </div>
               <div className="flex items-center text-sm">
-                <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>
                   Cập nhật:{' '}
                   {formatDistanceToNow(new Date(story.new_chap_at), {
@@ -99,6 +100,10 @@ export default async function StoryPage({ params }: Props) {
               <div className="flex items-center text-sm">
                 <List className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>Thể loại: {story.genres?.[0].name}</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span>{story.chapter_per_week} chương/tuần</span>
               </div>
             </div>
 

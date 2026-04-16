@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BookOpen, Loader, History } from 'lucide-react'
+import { BookOpen, Loader, History} from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 // import { useAuth } from "@/contexts/auth-context"
 import { SlidingBanner } from '@/components/sliding-banner'
@@ -20,7 +20,7 @@ export default async function Home() {
   const [hotListData, newChaptData, completeData, suggestData] =
     await Promise.all([
       api.book.getList({ page: 1, limit: 10, sort: '-comment_count' }),
-      api.book.getList({ page: 1, limit: 10, sort: '-new_chap_at' }),
+      api.book.getList({ page: 1, limit: 12, sort: '-new_chap_at' }),
       api.book.getList({ page: 1, limit: 10, sort: 'average_rating', status: 2 }),
       api.book.getList({ page: 1, limit: 10, sort: '-average_rating'}),
     ])
