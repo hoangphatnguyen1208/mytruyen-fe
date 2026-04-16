@@ -231,7 +231,7 @@ export const api = {
       storyId: number | string,
       page: number = 1,
       limit: number = 30,
-      sortOrder: 'asc' | 'desc' = 'desc',
+      sort: 'index' | '-index' = '-index',
       searchTerm: string = '',
     ): Promise<{
       chapters: ChapterDetail[]
@@ -240,7 +240,7 @@ export const api = {
       totalPages: number
     }> => {
       try {
-        const cacheKey = `chapters_paginated_${storyId}_${page}_${limit}_${sortOrder}_${searchTerm}`
+        const cacheKey = `chapters_paginated_${storyId}_${page}_${limit}_${sort}_${searchTerm}`
 
         // Check cache first
         const cachedResponse = apiCache.get<{
@@ -257,7 +257,7 @@ export const api = {
         const queryParams = new URLSearchParams({
           limit: String(limit),
           page: String(page),
-          sort_order: sortOrder,
+          sort: sort,
         })
 
         if (searchTerm.trim()) {
@@ -280,21 +280,13 @@ export const api = {
         }
 
         const payload = await res.json()
-        const paginatedChapters = Array.isArray(payload?.data) ? payload.data : []
-        const rawPagination = payload?.pagination ?? {}
 
-        const total = Number(rawPagination.total_items ?? paginatedChapters.length ?? 0)
-        const currentPage = Math.max(1, Number(rawPagination.page ?? page) || page)
-        const totalPages = Math.max(
-          0,
-          Number(rawPagination.total_pages ?? Math.ceil(total / limit)) || 0,
-        )
 
         const result = {
-          chapters: paginatedChapters,
-          total,
-          page: currentPage,
-          totalPages,
+          chapters: payload.data || [],
+          total: payload.pagination?.total_items ?? 0,
+          page: payload.pagination?.page ?? page,
+          totalPages: payload.pagination?.total_pages ?? 0,
         }
 
         // Cache the response for 5 minutes

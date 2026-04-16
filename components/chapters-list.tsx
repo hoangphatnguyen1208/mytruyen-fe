@@ -51,7 +51,7 @@ export function ChaptersList({ story }: Props) {
   const fetchChapters = useCallback(
     async (
       page: number,
-      filters: { searchTerm: string; sort: 'index' | '-index' },
+      filters: { searchTerm: string; sort: '-index' | 'index' },
     ) => {
       const data = await api.story.getPaginatedChapters(
         story.id,
@@ -88,7 +88,7 @@ export function ChaptersList({ story }: Props) {
   >({
     fetchFn: fetchChapters,
     initialPage: 1,
-    initialFilters: { searchTerm: '', sort: '-index' },
+    initialFilters: { searchTerm: '', sort: '-index'},
     perPage: 30,
   }) // Effect to update filters when search term changes (with debounce)
   useEffect(() => {
@@ -179,8 +179,8 @@ export function ChaptersList({ story }: Props) {
             <SelectValue placeholder="Sắp xếp" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="desc">Mới nhất</SelectItem>
-            <SelectItem value="asc">Cũ nhất</SelectItem>
+            <SelectItem value="-index">Mới nhất</SelectItem>
+            <SelectItem value="index">Cũ nhất</SelectItem>
           </SelectContent>
         </Select>
       </div>{' '}
