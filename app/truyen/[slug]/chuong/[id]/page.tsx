@@ -9,6 +9,10 @@ import { ReadingContent } from '@/components/reading-content'
 import { ReadingTracker } from '@/components/reading-tracker'
 import { api } from '@/lib/api'
 
+const DEMO_CHAPTER_CONTENT = `Đây là nội dung minh họa cho phiên bản demo của dự án.
+
+Dự án được xây dựng với mục đích học tập và không cung cấp nội dung truyện nhằm tránh vi phạm bản quyền.`
+
 export async function generateMetadata({
     params,
 }: {
@@ -33,7 +37,6 @@ export default async function ChapterPage({ params }: Props) {
     const chapterId = Number.parseInt(id)
 
     const story = await api.book.getBySlug(slug)
-    const chapterContent = await api.chapter.getById(slug, chapterId)
 
     // Get chapter details and navigation information
     const chapters_detail = story
@@ -44,8 +47,8 @@ export default async function ChapterPage({ params }: Props) {
         ? await api.chapter.getNavigation(story.id, chapterId)
         : { prev: null, next: null }
 
-    if (!story || !chapterContent) {
-        return <NotFound message="Chương không tồn tại" />
+    if (!story) {
+        return <NotFound message="Truyện không tồn tại" />
     }
 
     // Get previous and next chapter IDs for navigation
@@ -114,7 +117,7 @@ export default async function ChapterPage({ params }: Props) {
             />
             {/* Chapter content */}
             <ReadingContent
-                content={chapterContent}
+                content={DEMO_CHAPTER_CONTENT}
                 slug={slug}
                 chapterId={chapterId}
             />
